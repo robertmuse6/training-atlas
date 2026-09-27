@@ -10,7 +10,7 @@ His key questions:
 - Can he shorten the time between 5K runs from six days toward three without feeling worse afterward?
 - Is 5K pace improving, and how does faster pace relate to fatigue the next morning and in the following days?
 - How often does he sleep well and wake feeling energetic? What happened after workouts?
-- When was his last workout, and is he meeting three sessions as a minimum or four as the green goal each week?
+- When was his last workout, and is he meeting three workout days as orange or four-plus workout days as the green goal each seven-day week?
 
 Success is not a streak fabricated from silence. Missing answers remain unknown. A rest day is logged as rest only when he reports it.
 
@@ -26,7 +26,7 @@ These facts came directly from Naman's 27 September account of his training:
 | Sep 26 | Biceps session | Duration not given | Separate session record |
 | Sep 26 | Incline walk | 15% incline, 20 minutes | General health |
 
-In the Sep 21-27 sample week, four session records fall on two known active days. The prior week contains one *reported* run, not a complete training history. There are no reported sleep-quality, morning-energy, soreness, next-day fatigue or rest-day ratings. The single timed 5K is a baseline. **Pace improvement percentage is undefined until there is a second timed 5K.** Do not assert that he slept well, felt DOMS, recovered poorly, or became more consistent between these two incompletely logged weeks. DOMS can be mentioned as a possibility, not a diagnosis.
+In the Sep 21-27 sample week, four activity records fall on two known active days. The prior week contains one *reported* run, not a complete training history. There are no reported sleep-quality, morning-energy, soreness, next-day fatigue or rest-day ratings. The single timed 5K is a baseline. **Pace improvement percentage is undefined until there is a second timed 5K.** Do not assert that he slept well, felt DOMS, recovered poorly, or became more consistent between these two incompletely logged weeks. DOMS can be mentioned as a possibility, not a diagnosis.
 
 ## 3. Inputs and cadence
 
@@ -67,7 +67,7 @@ The first build implements the shared fields (`date`, `type`, `sleep`, `energy`,
 **Calculations:**
 - Good-sleep days: quality **7/10 or better**, count only days with an answer; show `good / days in view` and `rated days` separately. The user specified green at 7+. Orange 5–6 and red 1–4 are current design proposals, not thresholds he explicitly approved. Missing = gray, never red.
 - Energetic mornings: count days when energy **7/10 or better** (working design threshold; confirm if he prefers another cutoff). Show rated-days denominator and trend, not a wellness diagnosis.
-- Exercise: **4 or more session records in a week = green target; 3 = minimum.** Show distinct active dates separately so two workouts in one day do not appear as two workout days. Treat unknown days as unknown, not rest. Consider an amber visual for three and neutral/below-target for fewer, subject to user feedback.
+- Exercise: **4 or more distinct workout days in a seven-day week = green; exactly 3 = orange; fewer than 3 = red.** Count a date only once, even when there are multiple activities. Treat unreported days as unknown, not proof of rest. This is the user's explicitly specified target coloring, not a claim that missing days were sedentary. For 28-day views, show distinct active days and weekly breakdowns rather than grading a 28-day total against a seven-day threshold.
 - 5K pace: elapsed minutes divided by 5 km, displayed as min/km. For two timed runs, improvement percent = `(first timed pace − latest timed pace) / first timed pace × 100`; positive means faster. Alternatively show time improvement percent, but label the chosen basis. Do not compare an untimed run to a timed one.
 - Run interval: calendar-day difference between successive 5K dates, displayed with six-day initial interval and three-day aspiration, without implying a three-day interval is medically ideal.
 - Last-workout recency: last recorded workout date relative to viewing date. Do not freeze copy such as "yesterday" in a static dataset; compute dynamically.
@@ -78,9 +78,9 @@ The first build implements the shared fields (`date`, `type`, `sleep`, `energy`,
 
 This is a **real toggleable micro-app**, not an essay, not another Instinct-hosted page. GitHub Pages hosts the built app under `robertmuse6`; the repo's `data.json` is public for now by his explicit choice on Sep 27. Naman may later move to private hosting with authenticated access. Simply making a Pages repository private does not by itself make an already published public Pages site private; review hosting/access before doing that.
 
-The first screen should be a concise evidence-based summary followed immediately by visually substantial charts and infographics. Show the last workout and four prominent metrics: good-sleep days, energetic-morning days, weekly exercise sessions relative to 3/4 targets, and 5K pace-change percent or clearly marked unavailable. A weekly/28-day toggle and previous-period control change the charts. An interactive day detail reveals actual entries. Charts in the initial build:
+The first screen should be a concise evidence-based summary followed immediately by visually substantial charts and infographics. Show the last workout and four prominent metrics: good-sleep days, energetic-morning days, workout days out of seven relative to orange 3/green 4+ thresholds, and 5K pace-change percent or clearly marked unavailable. A weekly/28-day toggle and previous-period control change the charts. An interactive day detail reveals actual entries. Charts in the initial build:
 1. Two-series sleep-quality and morning-energy area plot on a 1–10 scale, with gaps for unknown and a 7/10 reference line.
-2. “How consistent you’ve been with exercise”: workout-session bars per day, plus days since last workout and the average gap between distinct reported workout dates within the selected view. Unreported days remain unknown.
+2. “How consistent you’ve been with exercise”: workout-day bars with a binary 0/1 mark per date, plus days since last workout and the average gap between distinct reported workout dates within the selected view. Unreported days remain unknown.
 3. “Tracking my 5K pace”: timed 5K pace line, showing a single baseline point until a second comparable run. Naman asked that the separate after-effect/soreness widget be removed; optional soreness may remain in day detail and future analysis, not as a standalone plot.
 
 The current app also has a **Preview sample / Back to real data** toggle with unmistakably synthetic sleep, energy, and soreness values only to demonstrate what the charts will look like. The real five workout rows stay real in both views. The default is actual data from the public repo. Never mix illustrative values into `data.json` or a report as if they were reported.
@@ -102,7 +102,7 @@ The current app also has a **Preview sample / Back to real data** toggle with un
 ## 7. Acceptance tests for the next reviewer
 
 1. Open the deployed Pages URL on desktop and phone; check actual pixels for clipped plots, labels, selected buttons and mobile scroll. Verify all assets and `data.json` return, not just HTTP 200 on a soft-404.
-2. Initial mode labels itself public real repo data; Sep 19 untimed and Sep 25 timed 5K, Sep 25 triceps, Sep 26 biceps and incline all appear; no invented sleep/energy/soreness scores. Four sessions count in Sep 21–27 week. Pace percent unavailable.
+2. Initial mode labels itself public real repo data; Sep 19 untimed and Sep 25 timed 5K, Sep 25 triceps, Sep 26 biceps and incline all appear; no invented sleep/energy/soreness scores. Two reported workout days out of seven count in Sep 21–27 week (Sep 25 and Sep 26), so the seven-day goal tile is red under the user's new rule; four individual activity records are still stored but not scored as four sessions. Pace percent unavailable.
 3. Sample toggle clearly labels synthetic subjective scores; 7/28-day and previous-period controls update all charts; reload restores real data. Day drilldown and tooltips work on mouse and touch, with a keyboard-equivalent detail route or selection control added if needed.
 4. Append a test morning answer to a private staging dataset: quality 7 and energy 8 produce one green sleep and one energetic morning, not seven. Clear it before public deployment. Check next-day association after a workout.
 5. Add a second timed 5K to a staging dataset and verify percent calculation; refuse to compute from the untimed run. Check zero/invalid duration handling and duplicate workout suppression.
@@ -113,6 +113,6 @@ The current app also has a **Preview sample / Back to real data** toggle with un
 - Confirm Sunday report time (7 PM was proposed). The morning 9:30 and every-three-day 6 PM timings, Google Sheet use, and train/easy/rest nudges are approved. Do not revive the separate evening check by default.
 - Decide whether orange/red sleep cutoffs and energetic-morning 7+ threshold feel right to Naman; only sleep-green 7+ and exercise targets were explicitly specified.
 - Establish a reliable, permission-scoped repo data-update pipeline after each report. The existing private Sheet can serve as backup, but public repo data currently requires a separate update. Reconcile versions to avoid drift; the agent must check for duplicate rows and preserve provenance.
-- Add a clear 7-day and rolling 28-day visual report export, monthly cumulative totals, run-gap chart and pace-versus-next-day-energy scatterplot when enough data exists. A week-on-week delta requires observed weeks with sufficiently complete records.
+- Add a clear 7-day and rolling 28-day visual report export, monthly cumulative totals, run-gap chart and pace-versus-next-day-energy scatterplot when enough data exists. A week-on-week delta requires observed weeks with sufficiently complete records. Weekly goals score distinct workout days, never the count of separate activity rows.
 - Ask whether he wants the app itself to accept new entries. Public GitHub Pages cannot securely mutate a repo using a client-embedded token. Keep writes with the agent or introduce a secure authenticated backend, never an anonymous endpoint.
 - Optional: migrate to private authenticated hosting when he is ready. Reassess repo Pages and fork/clone history exposure rather than assuming flipping a visibility switch retracts public data.
