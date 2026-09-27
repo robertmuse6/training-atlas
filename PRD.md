@@ -80,11 +80,10 @@ This is a **real toggleable micro-app**, not an essay, not another Instinct-host
 
 The first screen should be a concise evidence-based summary followed immediately by visually substantial charts and infographics. Show the last workout and four prominent metrics: good-sleep days, energetic-morning days, weekly exercise sessions relative to 3/4 targets, and 5K pace-change percent or clearly marked unavailable. A weekly/28-day toggle and previous-period control change the charts. An interactive day detail reveals actual entries. Charts in the initial build:
 1. Two-series sleep-quality and morning-energy area plot on a 1–10 scale, with gaps for unknown and a 7/10 reference line.
-2. Workout-session bar chart per date, with distinct active-day interpretation nearby.
-3. Post-workout soreness area plot (empty until rated), to later pair with energy and workout markers.
-4. Timed 5K pace line, showing a single baseline point until a second comparable run.
+2. “How consistent you’ve been with exercise”: workout-session bars per day, plus days since last workout and the average gap between distinct reported workout dates within the selected view. Unreported days remain unknown.
+3. “Tracking my 5K pace”: timed 5K pace line, showing a single baseline point until a second comparable run. Naman asked that the separate after-effect/soreness widget be removed; optional soreness may remain in day detail and future analysis, not as a standalone plot.
 
-The current app also has a **Preview sample** control with unmistakably synthetic sleep, energy, and soreness values only to demonstrate what the charts will look like. The real five workout rows stay real in both views. The default is actual data from the public repo. Never mix illustrative values into `data.json` or a report as if they were reported.
+The current app also has a **Preview sample / Back to real data** toggle with unmistakably synthetic sleep, energy, and soreness values only to demonstrate what the charts will look like. The real five workout rows stay real in both views. The default is actual data from the public repo. Never mix illustrative values into `data.json` or a report as if they were reported.
 
 ### Visual and interaction direction
 - Take compositional cues from [WHOOP trends](https://www.whoop.com/us/en/thelocker/track-progress-with-new-trend-views/), [Fitbit / Google Health](https://support.google.com/fitbit/answer/14236725), and [Apple Health's redesigned Insights](https://www.apple.com/newsroom/2026/09/apple-advances-health-and-fitness-capabilities-using-apple-intelligence/): a decisive daily summary, legible trends, and drilldowns, but no copied scores or branding.
