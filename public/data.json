@@ -1,7 +1,81 @@
 [
-  {"date":"2026-09-19","type":"workout","sleep":null,"energy":null,"soreness":null,"workout":"5K run","minutes":null,"distance":5,"incline":null,"notes":"First 5K, untimed, with Dia"},
-  {"date":"2026-09-25","type":"workout","sleep":null,"energy":null,"soreness":null,"workout":"5K run","minutes":30,"distance":5,"incline":null},
-  {"date":"2026-09-25","type":"workout","sleep":null,"energy":null,"soreness":null,"workout":"triceps","minutes":null,"distance":null,"incline":null},
-  {"date":"2026-09-26","type":"workout","sleep":null,"energy":null,"soreness":null,"workout":"biceps","minutes":null,"distance":null,"incline":null},
-  {"date":"2026-09-26","type":"workout","sleep":null,"energy":null,"soreness":null,"workout":"incline walk","minutes":20,"distance":null,"incline":15}
+  {
+    "date": "2026-09-19",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "5K run",
+    "minutes": null,
+    "distance": 5,
+    "incline": null,
+    "notes": "First untimed 5K with Dia"
+  },
+  {
+    "date": "2026-09-25",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "5K run",
+    "minutes": 30,
+    "distance": 5,
+    "incline": null,
+    "notes": "5K in 30 minutes"
+  },
+  {
+    "date": "2026-09-25",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "triceps",
+    "minutes": null,
+    "distance": null,
+    "incline": null
+  },
+  {
+    "date": "2026-09-26",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "biceps",
+    "minutes": null,
+    "distance": null,
+    "incline": null
+  },
+  {
+    "date": "2026-09-26",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "incline walk",
+    "minutes": 20,
+    "distance": null,
+    "incline": 15
+  },
+  {
+    "date": "2026-09-28",
+    "type": "morning",
+    "sleep": 8,
+    "energy": 6,
+    "soreness": null,
+    "workout": null,
+    "minutes": null,
+    "distance": null,
+    "incline": null
+  },
+  {
+    "date": "2026-09-29",
+    "type": "morning",
+    "sleep": 7,
+    "energy": 7,
+    "soreness": null,
+    "workout": null,
+    "minutes": null,
+    "distance": null,
+    "incline": null
+  }
 ]
