@@ -123,5 +123,17 @@
     "distance": null,
     "incline": null,
     "notes": "Not a 5K"
+  },
+  {
+    "date": "2026-10-02",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "6K run",
+    "minutes": 42.5,
+    "distance": 6,
+    "incline": null,
+    "notes": "6 km run; pace 7:05/km; new tracked benchmark"
   }
 ]
