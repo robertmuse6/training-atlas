@@ -99,5 +99,17 @@
     "minutes": null,
     "distance": null,
     "incline": null
+  },
+  {
+    "date": "2026-10-02",
+    "type": "morning",
+    "sleep": 10,
+    "energy": 8,
+    "soreness": null,
+    "workout": null,
+    "minutes": null,
+    "distance": null,
+    "incline": null,
+    "notes": "Regular workout (not a 5K)"
   }
 ]
