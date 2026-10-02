@@ -111,5 +111,17 @@
     "distance": null,
     "incline": null,
     "notes": "Regular workout (not a 5K)"
+  },
+  {
+    "date": "2026-10-02",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "regular workout",
+    "minutes": null,
+    "distance": null,
+    "incline": null,
+    "notes": "Not a 5K"
   }
 ]
