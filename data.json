@@ -153,10 +153,10 @@
     "sleep": null,
     "energy": null,
     "soreness": null,
-    "workout": "exercise (unspecified)",
-    "minutes": null,
+    "workout": "incline walk + biceps",
+    "minutes": 20,
     "distance": null,
     "incline": null,
-    "notes": "Type, duration, and other details not specified"
+    "notes": "20 min incline walking + biceps"
   }
 ]
