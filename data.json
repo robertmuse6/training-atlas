@@ -152,12 +152,12 @@
     "type": "workout",
     "sleep": null,
     "energy": null,
-    "soreness": null,
+    "soreness": 7,
     "workout": "incline walk + biceps",
     "minutes": 20,
     "distance": null,
     "incline": null,
-    "notes": "20 min incline walking + biceps"
+    "notes": "20 min incline walking + biceps; soreness scale: higher value = worse"
   },
   {
     "date": "2026-10-03",
