@@ -135,5 +135,16 @@
     "distance": 6,
     "incline": null,
     "notes": "6 km run; pace 7:05/km; new tracked benchmark"
+  },
+  {
+    "date": "2026-10-04",
+    "type": "morning",
+    "sleep": 7,
+    "energy": 6,
+    "soreness": null,
+    "workout": null,
+    "minutes": null,
+    "distance": null,
+    "incline": null
   }
 ]
