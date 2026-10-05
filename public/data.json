@@ -170,5 +170,28 @@
     "distance": null,
     "incline": null,
     "notes": "A shraadh broke his sleep"
+  },
+  {
+    "date": "2026-10-05",
+    "type": "morning",
+    "sleep": 9,
+    "energy": 9,
+    "soreness": null,
+    "workout": null,
+    "minutes": null,
+    "distance": null,
+    "incline": null
+  },
+  {
+    "date": "2026-10-05",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "incline walk",
+    "minutes": 20,
+    "distance": null,
+    "incline": null,
+    "notes": "13 min intense intervals (4 + 4 + 5); user-reported new endurance record (no prior baseline verified)"
   }
 ]
