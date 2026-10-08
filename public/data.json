@@ -227,5 +227,29 @@
     "minutes": null,
     "distance": null,
     "incline": null
+  },
+  {
+    "date": "2026-10-08",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "triceps",
+    "minutes": null,
+    "distance": null,
+    "incline": null,
+    "notes": "Triceps exercise; details not specified"
+  },
+  {
+    "date": "2026-10-08",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "6K run",
+    "minutes": 40,
+    "distance": 6,
+    "incline": null,
+    "notes": "6 km run; pace 6:40/km (interpreting message as per-km pace)"
   }
 ]
