@@ -216,5 +216,16 @@
     "minutes": null,
     "distance": null,
     "incline": null
+  },
+  {
+    "date": "2026-10-08",
+    "type": "morning",
+    "sleep": 8,
+    "energy": 8,
+    "soreness": null,
+    "workout": null,
+    "minutes": null,
+    "distance": null,
+    "incline": null
   }
 ]
