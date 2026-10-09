@@ -251,5 +251,16 @@
     "distance": 6,
     "incline": null,
     "notes": "6 km run; pace 6:40/km (interpreting message as per-km pace)"
+  },
+  {
+    "date": "2026-10-09",
+    "type": "morning",
+    "sleep": 8,
+    "energy": 6,
+    "soreness": null,
+    "workout": null,
+    "minutes": null,
+    "distance": null,
+    "incline": null
   }
 ]
