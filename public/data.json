@@ -262,5 +262,28 @@
     "minutes": null,
     "distance": null,
     "incline": null
+  },
+  {
+    "date": "2026-10-10",
+    "type": "morning",
+    "sleep": 7,
+    "energy": 7,
+    "soreness": null,
+    "workout": null,
+    "minutes": null,
+    "distance": null,
+    "incline": null
+  },
+  {
+    "date": "2026-10-10",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "run",
+    "minutes": 15,
+    "distance": null,
+    "incline": null,
+    "notes": "Easy run; distance and pace not specified"
   }
 ]
