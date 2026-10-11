@@ -285,5 +285,16 @@
     "distance": null,
     "incline": null,
     "notes": "Easy run; distance and pace not specified"
+  },
+  {
+    "date": "2026-10-11",
+    "type": "morning",
+    "sleep": 9,
+    "energy": 8,
+    "soreness": null,
+    "workout": null,
+    "minutes": null,
+    "distance": null,
+    "incline": null
   }
 ]
