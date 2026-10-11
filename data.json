@@ -296,5 +296,16 @@
     "minutes": null,
     "distance": null,
     "incline": null
+  },
+  {
+    "date": "2026-10-11",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "chest and triceps",
+    "minutes": null,
+    "distance": null,
+    "incline": null
   }
 ]
