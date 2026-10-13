@@ -329,5 +329,16 @@
     "minutes": null,
     "distance": null,
     "incline": null
+  },
+  {
+    "date": "2026-10-13",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "leg-day strength training",
+    "minutes": null,
+    "distance": null,
+    "incline": null
   }
 ]
