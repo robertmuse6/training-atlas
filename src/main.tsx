@@ -1,38 +1,201 @@
-import React,{useEffect,useMemo,useState} from 'react';import{createRoot}from'react-dom/client';import{AreaChart,Area,BarChart,Bar,LineChart,Line,XAxis,YAxis,CartesianGrid,Tooltip,Legend,ResponsiveContainer,ReferenceLine}from'recharts';import{Activity,Moon,Sun,Timer,Upload,Info,ChevronLeft,ChevronRight}from'lucide-react';import './style.css';
-type Entry={date:string;type:string;sleep:number|null;energy:number|null;soreness:number|null;workout:string;minutes:number|null;distance:number|null;incline:number|null;sample?:boolean};
-const sample:Entry[]=[
- {date:'2026-09-19',type:'workout',sleep:null,energy:null,soreness:null,workout:'5K run',minutes:null,distance:5,incline:null,sample:true},
- {date:'2026-09-21',type:'morning',sleep:8,energy:7,soreness:null,workout:'',minutes:null,distance:null,incline:null,sample:true},
- {date:'2026-09-22',type:'morning',sleep:7,energy:8,soreness:null,workout:'',minutes:null,distance:null,incline:null,sample:true},
- {date:'2026-09-23',type:'morning',sleep:6,energy:6,soreness:null,workout:'',minutes:null,distance:null,incline:null,sample:true},
- {date:'2026-09-24',type:'morning',sleep:8,energy:8,soreness:null,workout:'',minutes:null,distance:null,incline:null,sample:true},
- {date:'2026-09-25',type:'morning',sleep:7,energy:7,soreness:null,workout:'',minutes:null,distance:null,incline:null,sample:true},
- {date:'2026-09-25',type:'workout',sleep:null,energy:null,soreness:null,workout:'5K run',minutes:30,distance:5,incline:null,sample:true},
- {date:'2026-09-25',type:'workout',sleep:null,energy:null,soreness:null,workout:'triceps',minutes:null,distance:null,incline:null,sample:true},
- {date:'2026-09-26',type:'morning',sleep:6,energy:5,soreness:5,workout:'',minutes:null,distance:null,incline:null,sample:true},
- {date:'2026-09-26',type:'workout',sleep:null,energy:null,soreness:null,workout:'biceps',minutes:null,distance:null,incline:null,sample:true},
- {date:'2026-09-26',type:'workout',sleep:null,energy:null,soreness:null,workout:'incline walk',minutes:20,distance:null,incline:15,sample:true},
- {date:'2026-09-27',type:'morning',sleep:8,energy:7,soreness:3,workout:'',minutes:null,distance:null,incline:null,sample:true}];
-const byDate=(a:string,b:string)=>a.localeCompare(b);const parseNum=(x:string)=>x.trim()===''?null:Number.isFinite(Number(x))?Number(x):null;
-function parseCSV(s:string){const lines:string[][]=[];let row:string[]=[],cell='',quoted=false;for(let i=0;i<s.length;i++){const ch=s[i];if(ch==='"'){if(quoted&&s[i+1]==='"'){cell+='"';i++}else quoted=!quoted}else if(ch===','&&!quoted){row.push(cell);cell=''}else if((ch==='\n'||ch==='\r')&&!quoted){if(ch==='\r'&&s[i+1]==='\n')i++;row.push(cell);if(row.some(Boolean))lines.push(row);row=[];cell=''}else cell+=ch}row.push(cell);if(row.some(Boolean))lines.push(row);const header=lines.shift()?.map(x=>x.trim().replace(/^\uFEFF/,''))||[];const required=['date','record_type','sleep_quality_1_10','morning_energy_1_10','workout_type','duration_min'];if(required.some(k=>!header.includes(k)))throw Error('This is not the ledger Entries CSV. Export its Entries tab and try again.');const col=(r:string[],name:string)=>r[header.indexOf(name)]??'';return lines.map(r=>({date:col(r,'date').trim(),type:col(r,'record_type').trim(),sleep:parseNum(col(r,'sleep_quality_1_10')),energy:parseNum(col(r,'morning_energy_1_10')),soreness:parseNum(col(r,'soreness_1_10')),workout:col(r,'workout_type').trim(),minutes:parseNum(col(r,'duration_min')),distance:parseNum(col(r,'distance_km')),incline:parseNum(col(r,'incline_pct'))} as Entry)).filter(r=>/^\d{4}-\d{2}-\d{2}$/.test(r.date))}
+import React,{useEffect,useMemo,useState} from 'react';
+import{createRoot}from'react-dom/client';
+import{AreaChart,Area,BarChart,Bar,LineChart,Line,XAxis,YAxis,CartesianGrid,Tooltip,Legend,ResponsiveContainer,ReferenceLine}from'recharts';
+import{Activity,Moon,Sun,Timer,Upload,Info,ChevronLeft,ChevronRight,UtensilsCrossed}from'lucide-react';
+import './style.css';
+
+type Entry={date:string;type:string;sleep:number|null;energy:number|null;soreness:number|null;workout:string;minutes:number|null;distance:number|null;incline:number|null;item?:string;level?:number|null};
+
+const byDate=(a:string,b:string)=>a.localeCompare(b);
+const parseNum=(x:string)=>x.trim()===''?null:Number.isFinite(Number(x))?Number(x):null;
+
+function parseCSV(s:string){
+  const lines:string[][]=[];let row:string[]=[],cell='',quoted=false;
+  for(let i=0;i<s.length;i++){const ch=s[i];
+    if(ch==='"'){if(quoted&&s[i+1]==='"'){cell+='"';i++}else quoted=!quoted}
+    else if(ch===','&&!quoted){row.push(cell);cell=''}
+    else if((ch==='\n'||ch==='\r')&&!quoted){if(ch==='\r'&&s[i+1]==='\n')i++;row.push(cell);if(row.some(Boolean))lines.push(row);row=[];cell=''}
+    else cell+=ch}
+  row.push(cell);if(row.some(Boolean))lines.push(row);
+  const header=lines.shift()?.map(x=>x.trim().replace(/^﻿/,''))||[];
+  const required=['date','record_type','sleep_quality_1_10','morning_energy_1_10','workout_type','duration_min'];
+  if(required.some(k=>!header.includes(k)))throw Error('This is not the ledger Entries CSV. Export its Entries tab and try again.');
+  const col=(r:string[],name:string)=>r[header.indexOf(name)]??'';
+  return lines.map(r=>({date:col(r,'date').trim(),type:col(r,'record_type').trim(),sleep:parseNum(col(r,'sleep_quality_1_10')),energy:parseNum(col(r,'morning_energy_1_10')),soreness:parseNum(col(r,'soreness_1_10')),workout:col(r,'workout_type').trim(),minutes:parseNum(col(r,'duration_min')),distance:parseNum(col(r,'distance_km')),incline:parseNum(col(r,'incline_pct'))} as Entry)).filter(r=>/^\d{4}-\d{2}-\d{2}$/.test(r.date));
+}
+
 const fmtDate=(s:string)=>new Date(s+'T12:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short'});
 const dates=(anchor:string,n:number)=>Array.from({length:n},(_,i)=>{const d=new Date(anchor+'T12:00:00');d.setDate(d.getDate()-(n-1-i));return d.toISOString().slice(0,10)});
-const fmtPace=(m:number)=>{let t=Math.round(m*60);return `${Math.floor(t/60)}:${String(t%60).padStart(2,'0')}`};const isRun=(w:string)=>/run|5k/i.test(w);
-function App(){const [rows,setRows]=useState<Entry[]>([]),[realRows,setRealRows]=useState<Entry[]>([]),[demo,setDemo]=useState(false),[loading,setLoading]=useState(true),[range,setRange]=useState<7|28>(7),[offset,setOffset]=useState(0),[picked,setPicked]=useState<string|null>(null),[err,setErr]=useState('');
- useEffect(()=>{fetch(`${import.meta.env.BASE_URL}data.json`,{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Data file unavailable');return r.json()}).then(data=>{if(!Array.isArray(data))throw Error('Invalid data file');setRows(data);setRealRows(data);setLoading(false)}).catch(()=>{setErr('Could not load the public data file.');setLoading(false)})},[]);const anchor=useMemo(()=>{if(demo)return'2026-09-27';return rows.reduce((m,r)=>r.date>m?r.date:m,'2026-09-27')},[rows,demo]);const end=useMemo(()=>{const d=new Date(anchor+'T12:00:00');d.setDate(d.getDate()+offset*range);return d.toISOString().slice(0,10)},[anchor,offset,range]);
- const view=useMemo(()=>{const dayList=dates(end,range);return dayList.map(date=>{const r=rows.filter(x=>x.date===date);return{date,label:fmtDate(date),sleep:r.find(x=>x.sleep!==null)?.sleep??null,energy:r.find(x=>x.energy!==null)?.energy??null,soreness:r.find(x=>x.soreness!==null)?.soreness??null,workoutDay:r.some(x=>x.type==='workout'||x.workout)?1:0}})},[rows,end,range]);
- const inView=rows.filter(r=>view.some(d=>d.date===r.date));const workouts=inView.filter(x=>x.type==='workout'||x.workout);const activeDays=[...new Set(workouts.map(x=>x.date))].length;const exerciseTier=range===7?(activeDays>=4?'green':activeDays===3?'orange':'red'):'neutral';const goodSleep=view.filter(d=>d.sleep!==null&&d.sleep>=7).length,loggedSleep=view.filter(d=>d.sleep!==null).length;const goodEnergy=view.filter(d=>d.energy!==null&&d.energy>=7).length,loggedEnergy=view.filter(d=>d.energy!==null).length;const runs=rows.filter(r=>isRun(r.workout)&&r.distance===6&&r.minutes!==null).sort((a,b)=>byDate(a.date,b.date));const runPoints=runs.map(r=>({date:r.date,label:fmtDate(r.date),pace:r.minutes!/r.distance!}));const pacePct=runPoints.length>=2?((runPoints[0].pace-runPoints.at(-1)!.pace)/runPoints[0].pace*100):null;const recent=rows.filter(x=>x.type==='workout'||x.workout).sort((a,b)=>byDate(b.date,a.date))[0];const selected=picked||view.at(-1)?.date||'';const workoutDates=[...new Set(workouts.map(w=>w.date))].sort();const avgGap=workoutDates.length>=2?workoutDates.slice(1).reduce((sum,d,i)=>sum+Math.round((new Date(d+'T12:00:00').getTime()-new Date(workoutDates[i]+'T12:00:00').getTime())/86400000),0)/(workoutDates.length-1):null;const todayIST=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());const daysSinceLast=recent?Math.max(0,Math.floor((new Date(todayIST+'T12:00:00').getTime()-new Date(recent.date+'T12:00:00').getTime())/86400000)):null;
- const narrative=demo?'Illustrative preview: the sleep and energy curves below are made-up examples. The five reported workouts remain real. Reload to return to your actual public ledger.':`Your last recorded workout was ${recent?fmtDate(recent.date):'not logged'}. ${loggedSleep?`${goodSleep} of ${loggedSleep} recorded nights scored at least 7/10.`:'Sleep quality has not been recorded.'} ${loggedEnergy?`${goodEnergy} of ${loggedEnergy} recorded mornings felt energetic.`:'Morning energy has not been recorded.'} ${pacePct===null?'A second timed 6K is needed to calculate pace change. Earlier 5K runs stay in the ledger and are not compared.':`Your 6K pace changed ${pacePct>0?'+':''}${pacePct.toFixed(1)}% from the first timed 6K.`}`;
- async function upload(f:File|null){if(!f)return;try{const r=parseCSV(await f.text());if(!r.length)throw Error('No dated rows found.');setRows(r);setRealRows(r);setDemo(false);setOffset(0);setPicked(null);setErr('')}catch(e){setErr(e instanceof Error?e.message:'Could not read CSV')}}
- return <div className="shell"><div className="topline"><div className="brand"><span className="brandmark">✳</span> ATLAS <span className="separator">/</span> Naman</div><span className="private-pill">PUBLIC REPO DATA</span></div><header><div><div className="kicker">YOUR TRAINING STORY</div><h1>Build the habit.<br/><em>See the gains.</em></h1></div><div className="header-tools"><div className="switch"><button className={range===7?'on':''} onClick={()=>{setRange(7);setOffset(0);setPicked(null)}}>7 days</button><button className={range===28?'on':''} onClick={()=>{setRange(28);setOffset(0);setPicked(null)}}>28 days</button></div><button className="import" onClick={()=>{setRows(demo?realRows:sample);setDemo(!demo);setOffset(0);setPicked(null)}}>{demo?"✕ Back to real data":"Preview sample"}</button><label className="import"><Upload size={15}/> Import ledger CSV<input type="file" accept=".csv,text/csv" onChange={e=>upload(e.target.files?.[0]||null)}/></label></div></header>{err&&<div className="error" role="alert">{err}</div>}{loading&&<div className="loading">Loading workout ledger…</div>}
- <div className="source-strip"><span className={demo?'demo-pill':'real-pill'}>{demo?'DEMO · SAMPLE FEELINGS':'PUBLIC REPO DATA'}</span><span>{demo?'Workouts from your report; sleep, energy and soreness invented only for the illustration.':'Readings from public data.json; imported CSV remains only in this browser session.'}</span></div>
- <div className="insight"><span className="insight-icon"><Activity size={22}/></span><p>{narrative}</p></div>
- <div className="stats"><article className="stat"><div className="stat-label"><Moon size={17}/> GOOD SLEEP</div><strong>{loggedSleep?goodSleep:'—'}<small>/{range} days</small></strong><span>{loggedSleep?`${loggedSleep} days with ratings`:'No ratings yet'} · green at 7+/10</span></article><article className="stat"><div className="stat-label"><Sun size={17}/> ENERGETIC MORNINGS</div><strong>{loggedEnergy?goodEnergy:'—'}<small>/{range} days</small></strong><span>{loggedEnergy?`${loggedEnergy} mornings rated`:'No ratings yet'} · green at 7+/10</span></article><article className={`stat exercise ${exerciseTier}`}><div className="stat-label"><Activity size={17}/> WORKOUT DAYS</div><strong>{activeDays}<small>/{range} days</small></strong><span>{range===7?activeDays>=4?"Green · 4+ workout days":activeDays===3?"Orange · 3 workout days":"Red · fewer than 3 workout days":"Weekly goal: 4+ days green, 3 orange, fewer red"}</span></article><article className="stat"><div className="stat-label"><Timer size={17}/> 6K PACE</div><strong>{pacePct===null?'—':`${pacePct>0?'+':''}${pacePct.toFixed(1)}`}<small>% change</small></strong><span>{runs.length===1?`1 timed 6K baseline · ${fmtPace(runPoints[0].pace)}/km`:runs.length===0?'No timed 6K runs':`${runs.length} timed 6K runs recorded`}</span></article></div>
- <div className="section-head"><div><div className="kicker">THE WHOLE PICTURE</div><h2>Sleep, energy, and what training costs.</h2></div><div className="date-controls"><button aria-label="Previous period" onClick={()=>{setOffset(x=>x-1);setPicked(null)}}><ChevronLeft size={18}/></button><span>{fmtDate(view[0].date)} – {fmtDate(view.at(-1)!.date)}</span><button aria-label="Next period" disabled={offset>=0} onClick={()=>{setOffset(x=>x+1);setPicked(null)}}><ChevronRight size={18}/></button></div></div>
- <div className="chart-grid"><article className="chart-card hero-chart"><div className="chart-heading"><div><span className="eyebrow">01 / READINESS SIGNALS</span><h3>How you woke up</h3></div><span className="chart-note">1–10 · gaps = no answer</span></div><div className="chart-wrap"><ResponsiveContainer width="100%" height="100%"><AreaChart data={view} margin={{top:12,right:12,bottom:2,left:-23}} onClick={s=>s?.activeLabel&&setPicked(view.find(v=>v.label===s.activeLabel)?.date||null)}><defs><linearGradient id="sleepFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="#78bf9d" stopOpacity=".22"/><stop offset="100%" stopColor="#78bf9d" stopOpacity="0"/></linearGradient></defs><CartesianGrid stroke="#e9eeeb" vertical={false}/><XAxis dataKey="label" tick={{fontSize:11,fill:'#88958e'}} axisLine={false} tickLine={false} interval={range===7?0:4}/><YAxis domain={[0,10]} ticks={[0,5,10]} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/><Tooltip contentStyle={{borderRadius:12,border:'1px solid #e1e9e4',fontSize:12}}/><Legend iconType="circle" wrapperStyle={{fontSize:12}}/><ReferenceLine y={7} stroke="#8dad9c" strokeDasharray="4 5"/><Area isAnimationActive={false} type="monotone" dataKey="sleep" name="Sleep quality" stroke="#5baa82" strokeWidth={3} fill="url(#sleepFill)" connectNulls={false} dot={{r:3}} activeDot={{r:6}}/><Area type="monotone" dataKey="energy" name="Morning energy" stroke="#efa758" strokeWidth={3} fill="none" connectNulls={false} dot={{r:3}} activeDot={{r:6}}/></AreaChart></ResponsiveContainer></div><div className="mini-caption"><span className="legend-dot green"/>7–10 strong <span className="legend-dot amber"/>5–6 mixed <span className="legend-dot coral"/>1–4 low <span className="legend-dot gray"/>blank unknown</div></article>
- <article className="chart-card"><div className="chart-heading"><div><span className="eyebrow">02 / FREQUENCY</span><h3>How consistent you’ve been with exercise</h3></div><span className="chart-note">workout day = 1, even with multiple activities</span></div><div className="chart-wrap short"><ResponsiveContainer width="100%" height="100%"><BarChart data={view} margin={{top:12,right:3,bottom:3,left:-28}} onClick={s=>s?.activeLabel&&setPicked(view.find(v=>v.label===s.activeLabel)?.date||null)}><CartesianGrid stroke="#e9eeeb" vertical={false}/><XAxis dataKey="label" tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false} interval={range===7?0:4}/><YAxis allowDecimals={false} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/><Tooltip contentStyle={{borderRadius:12,border:'1px solid #e1e9e4',fontSize:12}}/><Bar isAnimationActive={false} dataKey="workoutDay" name="Workout day" fill="#5baa82" radius={[6,6,0,0]} maxBarSize={34}/></BarChart></ResponsiveContainer></div><div className="gap-metrics"><div><b>{daysSinceLast??"—"} <small>days</small></b><span>since your last workout</span></div><div><b>{avgGap===null?"—":avgGap.toFixed(1)} <small>days</small></b><span>average break between workout days in this view{workoutDates.length<2?" · needs two reported days":""}</span></div></div><p className="chart-foot">Each bar means a reported workout day, even if multiple activities happened. Unreported days remain unknown.</p></article>
-</div>
- <div className="lower"><article className="chart-card run-card"><div className="chart-heading"><div><span className="eyebrow">03 / 6K PERFORMANCE</span><h3>Tracking my 6K pace</h3></div><span className="chart-note">mm:ss per km · lower is faster</span></div><div className="chart-wrap short"><ResponsiveContainer width="100%" height="100%"><LineChart data={runPoints} margin={{top:18,right:20,bottom:3,left:-15}}><CartesianGrid stroke="#e9eeeb" vertical={false}/><XAxis dataKey="label" tick={{fontSize:11,fill:'#88958e'}} axisLine={false} tickLine={false}/><YAxis domain={['auto','auto']} tickFormatter={(v:number)=>fmtPace(v)} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/><Tooltip formatter={(v:any)=>[`${fmtPace(Number(v))} /km`,'Pace']} contentStyle={{borderRadius:12,border:'1px solid #e1e9e4',fontSize:12}}/><Line isAnimationActive={false} type="monotone" dataKey="pace" name="Pace" stroke="#7a97cc" strokeWidth={3} dot={{r:6,fill:'#7a97cc'}}/></LineChart></ResponsiveContainer></div><p className="chart-foot">{runPoints.length<2?'One timed 6K is a baseline, not an improvement trend. Earlier 5K runs are not compared.':'Pace change uses first and latest timed 6Ks in this ledger.'}</p></article><article className="day-card"><span className="eyebrow">TAP A DAY IN THE CHARTS</span><h3>{fmtDate(selected)}</h3><div className="day-values">{(['sleep','energy','soreness'] as const).map(k=>{const v=view.find(x=>x.date===selected)?.[k]??null;const col=k==='soreness'&&v!==null?(v>=7?'#c8453d':v>=4?'#c9822f':'#347e63'):undefined;return <div key={k}><span style={{textTransform:k==='soreness'?'none':undefined}}>{k==='soreness'?'Soreness (higher = worse)':k}</span><b style={col?{color:col}:undefined}>{v??'—'} <small>/10</small></b></div>})}</div><div className="day-events">{rows.filter(x=>x.date===selected&&(x.type==='workout'||x.workout)).map((e,i)=><span key={i}>{e.workout}{e.minutes!==null?` · ${e.minutes} min`:''}{e.minutes!==null&&e.distance===6?` · ${fmtPace(e.minutes/e.distance)}/km`:''}</span>)}{!rows.some(x=>x.date===selected&&(x.type==='workout'||x.workout))&&<span>No workout recorded; not assumed rest.</span>}</div></article></div>
- <footer><Info size={14}/> Public repo data is visible to anyone. CSV imports stay in your browser memory. Sample feelings are illustrative, not your records. <a href="https://21st.dev/@shadcnspace/components/card-12">21st.dev inspiration</a> · <a href="https://mobbin.com/explore/mobile/app-categories/health-fitness">Mobbin inspiration</a></footer></div>
+const fmtPace=(m:number)=>{let t=Math.round(m*60);return `${Math.floor(t/60)}:${String(t%60).padStart(2,'0')}`};
+const isRun=(w:string)=>/run|5k/i.test(w);
+const fmtAvg=(v:number|null)=>v===null?'—':v.toFixed(1);
+const levelLabel=(l:number|null)=>l===3?'multiple':l===2?'meal':l===1?'snack':'';
+
+// Trailing 3-calendar-day average of reported values only. Returns null when the window has no values.
+function trailing3(vals:(number|null)[],i:number){const w=vals.slice(Math.max(0,i-2),i+1).filter((v):v is number=>v!==null);return{avg:w.length?w.reduce((a,b)=>a+b,0)/w.length:null,n:w.length};}
+
+const foodTitle=(d:{label:string;foodCount:number;food:Entry[]})=>d.foodCount===0?`${d.label}: not reported (unknown)`:`${d.label}: ${d.foodCount} event${d.foodCount>1?'s':''} · ${d.food.map(f=>`${f.item||'junk'}${f.level?` (${levelLabel(f.level)})`:''}`).join(', ')}`;
+
+function App(){
+  const [rows,setRows]=useState<Entry[]>([]),[loading,setLoading]=useState(true),[range,setRange]=useState<7|28>(7),[offset,setOffset]=useState(0),[picked,setPicked]=useState<string|null>(null),[err,setErr]=useState('');
+
+  useEffect(()=>{fetch(`${import.meta.env.BASE_URL}data.json`,{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Data file unavailable');return r.json()}).then(data=>{if(!Array.isArray(data))throw Error('Invalid data file');setRows(data);setLoading(false)}).catch(()=>{setErr('Could not load the data file.');setLoading(false)})},[]);
+
+  const anchor=useMemo(()=>rows.reduce((m,r)=>r.date>m?r.date:m,'2026-09-27'),[rows]);
+  const end=useMemo(()=>{const d=new Date(anchor+'T12:00:00');d.setDate(d.getDate()+offset*range);return d.toISOString().slice(0,10)},[anchor,offset,range]);
+
+  const view=useMemo(()=>{
+    const dayList=dates(end,range);
+    const base=dayList.map(date=>{
+      const r=rows.filter(x=>x.date===date);
+      const food=r.filter(x=>x.type==='food');
+      return{date,label:fmtDate(date),
+        sleep:r.find(x=>x.sleep!==null)?.sleep??null,
+        energy:r.find(x=>x.energy!==null)?.energy??null,
+        soreness:r.find(x=>x.soreness!==null)?.soreness??null,
+        workoutDay:r.some(x=>x.type==='workout'||x.workout)?1:0,
+        food};
+    });
+    const sleepVals=base.map(d=>d.sleep),energyVals=base.map(d=>d.energy);
+    return base.map((d,i)=>{
+      const s=trailing3(sleepVals,i),e=trailing3(energyVals,i);
+      // Food: count is per-day frequency; day level is 1 snack / 2 meal for a single event, 3 when multiple events.
+      const count=d.food.length;
+      const dayLevel=count>=2?3:count===1?(d.food[0].level??null):null;
+      return{...d,sleepMA:s.avg,sleepMAN:s.n,energyMA:e.avg,energyMAN:e.n,foodCount:count,foodLevel:dayLevel};
+    });
+  },[rows,end,range]);
+
+  const inView=rows.filter(r=>view.some(d=>d.date===r.date));
+  const workouts=inView.filter(x=>x.type==='workout'||x.workout);
+  const activeDays=[...new Set(workouts.map(x=>x.date))].length;
+  const exerciseTier=range===7?(activeDays>=4?'green':activeDays===3?'orange':'red'):'neutral';
+  const goodSleep=view.filter(d=>d.sleep!==null&&d.sleep>=7).length,loggedSleep=view.filter(d=>d.sleep!==null).length;
+  const goodEnergy=view.filter(d=>d.energy!==null&&d.energy>=7).length,loggedEnergy=view.filter(d=>d.energy!==null).length;
+  const avgSleep=loggedSleep?view.reduce((s,d)=>s+(d.sleep??0),0)/loggedSleep:null;
+  const avgEnergy=loggedEnergy?view.reduce((s,d)=>s+(d.energy??0),0)/loggedEnergy:null;
+  const runs=rows.filter(r=>isRun(r.workout)&&r.distance===6&&r.minutes!==null).sort((a,b)=>byDate(a.date,b.date));
+  const runPoints=runs.map(r=>({date:r.date,label:fmtDate(r.date),pace:r.minutes!/r.distance!}));
+  const pacePct=runPoints.length>=2?((runPoints[0].pace-runPoints.at(-1)!.pace)/runPoints[0].pace*100):null;
+  const recent=rows.filter(x=>x.type==='workout'||x.workout).sort((a,b)=>byDate(b.date,a.date))[0];
+  const selected=picked||view.at(-1)?.date||'';
+  const workoutDates=[...new Set(workouts.map(w=>w.date))].sort();
+  const avgGap=workoutDates.length>=2?workoutDates.slice(1).reduce((sum,d,i)=>sum+Math.round((new Date(d+'T12:00:00').getTime()-new Date(workoutDates[i]+'T12:00:00').getTime())/86400000),0)/(workoutDates.length-1):null;
+  const todayIST=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+  const daysSinceLast=recent?Math.max(0,Math.floor((new Date(todayIST+'T12:00:00').getTime()-new Date(recent.date+'T12:00:00').getTime())/86400000)):null;
+
+  const foodEvents=inView.filter(x=>x.type==='food');
+  const foodDaysWithEvents=view.filter(d=>d.foodCount>0).length;
+  const foodUnreported=view.filter(d=>d.foodCount===0).length;
+  const snackCount=foodEvents.filter(f=>(f.level??1)===1).length;
+  const mealCount=foodEvents.filter(f=>f.level===2).length;
+  const selectedFood=rows.filter(x=>x.date===selected&&x.type==='food');
+
+  const narrative=`Your last recorded workout was ${recent?fmtDate(recent.date):'not logged'}. ${loggedSleep?`${goodSleep} of ${loggedSleep} recorded nights scored at least 7/10.`:'Sleep quality has not been recorded.'} ${loggedEnergy?`${goodEnergy} of ${loggedEnergy} recorded mornings felt energetic.`:'Morning energy has not been recorded.'} ${pacePct===null?'A second timed 6K is needed to calculate pace change. Earlier 5K runs stay in the ledger and are not compared.':`Your 6K pace changed ${pacePct>0?'+':''}${pacePct.toFixed(1)}% from the first timed 6K.`}`;
+
+  async function upload(f:File|null){if(!f)return;try{const r=parseCSV(await f.text());if(!r.length)throw Error('No dated rows found.');setRows(r);setOffset(0);setPicked(null);setErr('')}catch(e){setErr(e instanceof Error?e.message:'Could not read CSV')}}
+
+  const maTooltip=(value:any,name:any,item:any)=>{
+    const p=item?.payload;
+    if(item?.dataKey==='sleepMA')return[`${Number(value).toFixed(1)} · avg of ${p?.sleepMAN??0} of 3 days`,'Sleep 3-day trend'];
+    if(item?.dataKey==='energyMA')return[`${Number(value).toFixed(1)} · avg of ${p?.energyMAN??0} of 3 days`,'Energy 3-day trend'];
+    return[value,name];
+  };
+
+  return <div className="shell">
+    <div className="topline"><div className="brand"><span className="brandmark">✳</span> ATLAS <span className="separator">/</span> Naman</div></div>
+    <header>
+      <div><div className="kicker">YOUR TRAINING STORY</div><h1>Build the habit.<br/><em>See the gains.</em></h1></div>
+      <div className="header-tools">
+        <div className="switch"><button className={range===7?'on':''} onClick={()=>{setRange(7);setOffset(0);setPicked(null)}}>7 days</button><button className={range===28?'on':''} onClick={()=>{setRange(28);setOffset(0);setPicked(null)}}>28 days</button></div>
+        <label className="import"><Upload size={15}/> Import ledger CSV<input type="file" accept=".csv,text/csv" onChange={e=>upload(e.target.files?.[0]||null)}/></label>
+      </div>
+    </header>
+    {err&&<div className="error" role="alert">{err}</div>}
+    {loading&&<div className="loading">Loading workout ledger…</div>}
+    <div className="insight"><span className="insight-icon"><Activity size={22}/></span><p>{narrative}</p></div>
+    <div className="stats">
+      <article className="stat"><div className="stat-label"><Moon size={17}/> GOOD SLEEP</div><strong>{loggedSleep?goodSleep:'—'}<small>/{range} days</small></strong><span>{loggedSleep?`${loggedSleep} days with ratings`:'No ratings yet'} · green at 7+/10</span></article>
+      <article className="stat"><div className="stat-label"><Sun size={17}/> ENERGETIC MORNINGS</div><strong>{loggedEnergy?goodEnergy:'—'}<small>/{range} days</small></strong><span>{loggedEnergy?`${loggedEnergy} mornings rated`:'No ratings yet'} · green at 7+/10</span></article>
+      <article className={`stat exercise ${exerciseTier}`}><div className="stat-label"><Activity size={17}/> WORKOUT DAYS</div><strong>{activeDays}<small>/{range} days</small></strong><span>{range===7?activeDays>=4?"Green · 4+ workout days":activeDays===3?"Orange · 3 workout days":"Red · fewer than 3 workout days":"Weekly goal: 4+ days green, 3 orange, fewer red"}</span></article>
+      <article className="stat"><div className="stat-label"><Timer size={17}/> 6K PACE</div><strong>{pacePct===null?'—':`${pacePct>0?'+':''}${pacePct.toFixed(1)}`}<small>% change</small></strong><span>{runs.length===1?`1 timed 6K baseline · ${fmtPace(runPoints[0].pace)}/km`:runs.length===0?'No timed 6K runs':`${runs.length} timed 6K runs recorded`}</span></article>
+    </div>
+    <div className="section-head">
+      <div><div className="kicker">THE WHOLE PICTURE</div><h2>Sleep, energy, food, and what training costs.</h2></div>
+      <div className="date-controls"><button aria-label="Previous period" onClick={()=>{setOffset(x=>x-1);setPicked(null)}}><ChevronLeft size={18}/></button><span>{fmtDate(view[0].date)} – {fmtDate(view.at(-1)!.date)}</span><button aria-label="Next period" disabled={offset>=0} onClick={()=>{setOffset(x=>x+1);setPicked(null)}}><ChevronRight size={18}/></button></div>
+    </div>
+    <div className="chart-grid">
+      <article className="chart-card hero-chart">
+        <div className="chart-heading"><div><span className="eyebrow">01 / READINESS SIGNALS</span><h3>How you woke up</h3></div><span className="chart-note">1–10 · gaps = no answer</span></div>
+        <div className="chart-wrap"><ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={view} margin={{top:12,right:12,bottom:2,left:-23}} onClick={s=>s?.activeLabel&&setPicked(view.find(v=>v.label===s.activeLabel)?.date||null)}>
+            <defs><linearGradient id="sleepFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#78bf9d" stopOpacity=".22"/><stop offset="100%" stopColor="#78bf9d" stopOpacity="0"/></linearGradient></defs>
+            <CartesianGrid stroke="#e9eeeb" vertical={false}/>
+            <XAxis dataKey="label" tick={{fontSize:11,fill:'#88958e'}} axisLine={false} tickLine={false} interval={range===7?0:4}/>
+            <YAxis domain={[0,10]} ticks={[0,5,10]} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/>
+            <Tooltip contentStyle={{borderRadius:12,border:'1px solid #e1e9e4',fontSize:12}} formatter={maTooltip}/>
+            <Legend iconType="circle" wrapperStyle={{fontSize:12}}/>
+            <ReferenceLine y={7} stroke="#8dad9c" strokeDasharray="4 5"/>
+            <Area isAnimationActive={false} type="monotone" dataKey="sleep" name="Sleep quality" stroke="#5baa82" strokeWidth={3} fill="url(#sleepFill)" connectNulls={false} dot={{r:3}} activeDot={{r:6}}/>
+            <Area type="monotone" dataKey="energy" name="Morning energy" stroke="#efa758" strokeWidth={3} fill="none" connectNulls={false} dot={{r:3}} activeDot={{r:6}}/>
+            <Area legendType="none" type="monotone" dataKey="sleepMA" name="Sleep 3-day trend" stroke="#347e63" strokeWidth={2} strokeDasharray="5 4" fill="none" connectNulls={false} dot={false}/>
+            <Area legendType="none" type="monotone" dataKey="energyMA" name="Energy 3-day trend" stroke="#c9822f" strokeWidth={2} strokeDasharray="5 4" fill="none" connectNulls={false} dot={false}/>
+          </AreaChart>
+        </ResponsiveContainer></div>
+        <div className="mini-caption averages"><span><b>Sleep avg</b> {fmtAvg(avgSleep)}</span><span className="sep">·</span><span><b>Energy avg</b> {fmtAvg(avgEnergy)}</span><span className="sep">·</span><span>dashed = trailing 3-day average</span><span className="sep">·</span><span>gaps = no answer</span></div>
+      </article>
+      <article className="chart-card">
+        <div className="chart-heading"><div><span className="eyebrow">02 / FREQUENCY</span><h3>How consistent you’ve been with exercise</h3></div><span className="chart-note">workout day = 1, even with multiple activities</span></div>
+        <div className="chart-wrap short"><ResponsiveContainer width="100%" height="100%">
+          <BarChart data={view} margin={{top:12,right:3,bottom:3,left:-28}} onClick={s=>s?.activeLabel&&setPicked(view.find(v=>v.label===s.activeLabel)?.date||null)}>
+            <CartesianGrid stroke="#e9eeeb" vertical={false}/>
+            <XAxis dataKey="label" tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false} interval={range===7?0:4}/>
+            <YAxis allowDecimals={false} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/>
+            <Tooltip contentStyle={{borderRadius:12,border:'1px solid #e1e9e4',fontSize:12}}/>
+            <Bar isAnimationActive={false} dataKey="workoutDay" name="Workout day" fill="#5baa82" radius={[6,6,0,0]} maxBarSize={34}/>
+          </BarChart>
+        </ResponsiveContainer></div>
+        <div className="gap-metrics"><div><b>{daysSinceLast??"—"} <small>days</small></b><span>since your last workout</span></div><div><b>{avgGap===null?"—":avgGap.toFixed(1)} <small>days</small></b><span>average break between workout days in this view{workoutDates.length<2?" · needs two reported days":""}</span></div></div>
+        <p className="chart-foot">Each bar means a reported workout day, even if multiple activities happened. Unreported days remain unknown.</p>
+      </article>
+    </div>
+    <article className="chart-card food-card">
+      <div className="chart-heading"><div><span className="eyebrow">03 / FOOD</span><h3>How often you ate junk</h3></div><span className="chart-note">level 1 = snack · 2 = meal · 3 = multiple in a day</span></div>
+      <div className={`food-grid ${range===28?'month':''}`}>
+        {view.map(d=><button key={d.date} className={`food-cell ${d.foodCount===0?'unknown':''} ${selected===d.date?'sel':''}`} onClick={()=>setPicked(d.date)} title={foodTitle(d)}>
+          <span className="food-date">{d.label}</span>
+          {d.foodCount===0?<span className="food-none">—</span>:<span className="food-mark"><b>{d.foodCount}</b>{d.foodLevel!==null&&<i>L{d.foodLevel}</i>}</span>}
+        </button>)}
+      </div>
+      <p className="chart-foot">{foodEvents.length===0?`No junk food reported in this period. ${foodUnreported} day${foodUnreported===1?'':'s'} unreported — unknown, not zero.`:`${foodEvents.length} event${foodEvents.length===1?'':'s'} over ${foodDaysWithEvents} day${foodDaysWithEvents===1?'':'s'}${snackCount?` · ${snackCount} snack${snackCount===1?'':'s'}`:""}${mealCount?` · ${mealCount} meal${mealCount===1?'':'s'}`:""}. ${foodUnreported} day${foodUnreported===1?'':'s'} unreported — unknown, not zero.`}</p>
+    </article>
+    <div className="lower">
+      <article className="chart-card run-card">
+        <div className="chart-heading"><div><span className="eyebrow">04 / 6K PERFORMANCE</span><h3>Tracking my 6K pace</h3></div><span className="chart-note">mm:ss per km · lower is faster</span></div>
+        <div className="chart-wrap short"><ResponsiveContainer width="100%" height="100%">
+          <LineChart data={runPoints} margin={{top:18,right:20,bottom:3,left:-15}}>
+            <CartesianGrid stroke="#e9eeeb" vertical={false}/>
+            <XAxis dataKey="label" tick={{fontSize:11,fill:'#88958e'}} axisLine={false} tickLine={false}/>
+            <YAxis domain={['auto','auto']} tickFormatter={(v:number)=>fmtPace(v)} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/>
+            <Tooltip formatter={(v:any)=>[`${fmtPace(Number(v))} /km`,'Pace']} contentStyle={{borderRadius:12,border:'1px solid #e1e9e4',fontSize:12}}/>
+            <Line isAnimationActive={false} type="monotone" dataKey="pace" name="Pace" stroke="#7a97cc" strokeWidth={3} dot={{r:6,fill:'#7a97cc'}}/>
+          </LineChart>
+        </ResponsiveContainer></div>
+        <p className="chart-foot">{runPoints.length<2?'One timed 6K is a baseline, not an improvement trend. Earlier 5K runs are not compared.':'Pace change uses first and latest timed 6Ks in this ledger.'}</p>
+      </article>
+      <article className="day-card">
+        <span className="eyebrow">TAP A DAY IN THE CHARTS</span>
+        <h3>{fmtDate(selected)}</h3>
+        <div className="day-values">{(['sleep','energy','soreness'] as const).map(k=>{const v=view.find(x=>x.date===selected)?.[k]??null;const col=k==='soreness'&&v!==null?(v>=7?'#c8453d':v>=4?'#c9822f':'#347e63'):undefined;return <div key={k}><span style={{textTransform:k==='soreness'?'none':undefined}}>{k==='soreness'?'Soreness (higher = worse)':k}</span><b style={col?{color:col}:undefined}>{v??'—'} <small>/10</small></b></div>})}</div>
+        <div className="day-events">
+          {rows.filter(x=>x.date===selected&&(x.type==='workout'||x.workout)).map((e,i)=><span key={'w'+i}>{e.workout}{e.minutes!==null?` · ${e.minutes} min`:""}{e.minutes!==null&&e.distance===6?` · ${fmtPace(e.minutes/e.distance)}/km`:""}</span>)}
+          {!rows.some(x=>x.date===selected&&(x.type==='workout'||x.workout))&&<span>No workout recorded; not assumed rest.</span>}
+          {selectedFood.map((f,i)=><span key={'f'+i} className="food-event"><UtensilsCrossed size={11}/> {f.item||'junk'}{f.level?` · ${levelLabel(f.level)}`:""}</span>)}
+        </div>
+      </article>
+    </div>
+    <footer><Info size={14}/> CSV imports stay in your browser memory. <a href="https://21st.dev/@shadcnspace/components/card-12">21st.dev inspiration</a> · <a href="https://mobbin.com/explore/mobile/app-categories/health-fitness">Mobbin inspiration</a></footer>
+  </div>;
 }
+
 createRoot(document.getElementById('root')!).render(<App/>);
