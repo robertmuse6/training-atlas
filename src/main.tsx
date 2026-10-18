@@ -86,13 +86,14 @@ function App(){
   const todayIST=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
   const daysSinceLast=recent?Math.max(0,Math.floor((new Date(todayIST+'T12:00:00').getTime()-new Date(recent.date+'T12:00:00').getTime())/86400000)):null;
 
+  const readinessVals=view.flatMap(d=>[d.sleep,d.energy,d.sleepFit,d.energyFit]).filter((v):v is number=>v!=null);
+  const readinessFloor=readinessVals.length?Math.min(4,Math.floor(Math.min(...readinessVals))):4;
   const foodEvents=inView.filter(x=>x.type==='food'&&x.day_level==null);
-  const foodDaysWithEvents=view.filter(d=>d.foodCount>0||d.foodDeclCount>0).length;
   const foodDeclDays=view.filter(d=>d.foodDeclCount>0).length;
   const foodUnreported=view.filter(d=>d.foodCount===0&&d.foodDeclCount===0).length;
-  const snackCount=foodEvents.filter(f=>(f.level??1)===1).length;
-  const mealCount=foodEvents.filter(f=>f.level===2).length;
   const selectedFood=rows.filter(x=>x.date===selected&&x.type==='food');
+  const lastFoodDate=rows.filter(x=>x.type==='food').map(x=>x.date).sort().at(-1);
+  const daysSinceJunk=lastFoodDate?Math.max(0,Math.floor((new Date(todayIST+'T12:00:00').getTime()-new Date(lastFoodDate+'T12:00:00').getTime())/86400000)):null;
 
   const narrative=`Your last recorded workout was ${recent?fmtDate(recent.date):'not logged'}. ${loggedSleep?`${goodSleep} of ${loggedSleep} recorded nights scored at least 7/10.`:'Sleep quality has not been recorded.'} ${loggedEnergy?`${goodEnergy} of ${loggedEnergy} recorded mornings felt energetic.`:'Morning energy has not been recorded.'} ${pacePct===null?'A second timed 6K is needed to calculate pace change. Earlier 5K runs stay in the ledger and are not compared.':`Your 6K pace changed ${pacePct>0?'+':''}${pacePct.toFixed(1)}% from the first timed 6K.`}`;
 
@@ -135,7 +136,7 @@ function App(){
             <defs><linearGradient id="sleepFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#78bf9d" stopOpacity=".22"/><stop offset="100%" stopColor="#78bf9d" stopOpacity="0"/></linearGradient></defs>
             <CartesianGrid stroke="#e9eeeb" vertical={false}/>
             <XAxis dataKey="label" tick={{fontSize:11,fill:'#88958e'}} axisLine={false} tickLine={false} interval={range===7?0:4}/>
-            <YAxis domain={[0,10]} ticks={[0,5,10]} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/>
+            <YAxis domain={[readinessFloor,10]} ticks={[readinessFloor,7,10]} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/>
             <Tooltip contentStyle={{borderRadius:12,border:'1px solid #e1e9e4',fontSize:12}} formatter={maTooltip}/>
             <Legend iconType="circle" wrapperStyle={{fontSize:12}}/>
             <ReferenceLine y={7} stroke="#8dad9c" strokeDasharray="4 5"/>
@@ -149,11 +150,11 @@ function App(){
       </article>
       <article className="chart-card">
         <div className="chart-heading"><div><span className="eyebrow">02 / FREQUENCY</span><h3>How consistent you’ve been with exercise</h3></div><span className="chart-note">workout day = 1, even with multiple activities</span></div>
-        <div className="chart-wrap short"><ResponsiveContainer width="100%" height="100%">
+        <div className="chart-wrap xshort"><ResponsiveContainer width="100%" height="100%">
           <BarChart data={view} margin={{top:12,right:3,bottom:3,left:-28}} onClick={s=>s?.activeLabel&&setPicked(view.find(v=>v.label===s.activeLabel)?.date||null)}>
             <CartesianGrid stroke="#e9eeeb" vertical={false}/>
             <XAxis dataKey="label" tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false} interval={range===7?0:4}/>
-            <YAxis allowDecimals={false} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/>
+            <YAxis domain={[0,1]} ticks={[0,1]} allowDecimals={false} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/>
             <Tooltip contentStyle={{borderRadius:12,border:'1px solid #e1e9e4',fontSize:12}}/>
             <Bar isAnimationActive={false} dataKey="workoutDay" name="Workout day" fill="#5baa82" radius={[6,6,0,0]} maxBarSize={34}/>
           </BarChart>
@@ -176,7 +177,7 @@ function App(){
         </BarChart>
       </ResponsiveContainer></div>
       <div className="food-legend"><span><i style={{background:'#f2c94c'}}/>1 snack</span><span><i style={{background:'#ef9a3c'}}/>2 meal</span><span><i style={{background:'#d9534a'}}/>3 multiple in a day</span></div>
-      <p className="chart-foot">{foodEvents.length===0&&foodDeclDays===0?`No junk food reported in this period. ${foodUnreported} day${foodUnreported===1?'':'s'} unreported, unknown not zero.`:`${foodEvents.length} known event${foodEvents.length===1?'':'s'} over ${foodDaysWithEvents} reported day${foodDaysWithEvents===1?'':'s'}${snackCount?` · ${snackCount} snack${snackCount===1?'':'s'}`:""}${mealCount?` · ${mealCount} meal${mealCount===1?'':'s'}`:""}${foodDeclDays?` · ${foodDeclDays} day${foodDeclDays===1?'':'s'} rated by day level (occasion count unknown)`:""}. ${foodUnreported} day${foodUnreported===1?'':'s'} unreported, unknown not zero. Tap a bar for details.`} Same dates as the exercise chart above.</p>
+      <p className="chart-foot">{daysSinceJunk===null?<>No junk food logged yet. </>:<><b>{daysSinceJunk}</b> day{daysSinceJunk===1?'':'s'} since your last logged junk day ({fmtDate(lastFoodDate!)}). </>}{foodUnreported} day{foodUnreported===1?'':'s'} unreported, unknown not zero.{foodEvents.length>0||foodDeclDays>0?' Tap a bar for details.':''} Same dates as the exercise chart above.</p>
     </article>
     <div className="lower">
       <article className="chart-card run-card">

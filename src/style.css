@@ -13,3 +13,7 @@
 .mini-caption .sep{color:#c3cfc5}
 .day-events .food-event{display:inline-flex;align-items:center;gap:5px;color:#5b6f83}
 .food-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:#6d7b73;margin:6px 0 0}.food-legend span{display:inline-flex;align-items:center;gap:5px}.food-legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+
+/* Exercise chart: binary 0-1 axis at the same unit height as the food chart (his "scale 3 accordingly"). */
+.chart-wrap.xshort{height:72px;margin-top:15px}
+.chart-foot b{color:#52785e}
