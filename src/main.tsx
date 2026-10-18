@@ -4,7 +4,7 @@ import{AreaChart,Area,BarChart,Bar,LineChart,Line,XAxis,YAxis,CartesianGrid,Tool
 import{Activity,Moon,Sun,Timer,Upload,Info,ChevronLeft,ChevronRight,UtensilsCrossed}from'lucide-react';
 import './style.css';
 
-type Entry={date:string;type:string;sleep:number|null;energy:number|null;soreness:number|null;workout:string;minutes:number|null;distance:number|null;incline:number|null;item?:string;level?:number|null};
+type Entry={date:string;type:string;sleep:number|null;energy:number|null;soreness:number|null;workout:string;minutes:number|null;distance:number|null;incline:number|null;item?:string;level?:number|null;day_level?:number|null};
 
 const byDate=(a:string,b:string)=>a.localeCompare(b);
 const parseNum=(x:string)=>x.trim()===''?null:Number.isFinite(Number(x))?Number(x):null;
@@ -21,7 +21,7 @@ function parseCSV(s:string){
   const required=['date','record_type','sleep_quality_1_10','morning_energy_1_10','workout_type','duration_min'];
   if(required.some(k=>!header.includes(k)))throw Error('This is not the ledger Entries CSV. Export its Entries tab and try again.');
   const col=(r:string[],name:string)=>r[header.indexOf(name)]??'';
-  return lines.map(r=>({date:col(r,'date').trim(),type:col(r,'record_type').trim(),sleep:parseNum(col(r,'sleep_quality_1_10')),energy:parseNum(col(r,'morning_energy_1_10')),soreness:parseNum(col(r,'soreness_1_10')),workout:col(r,'workout_type').trim(),minutes:parseNum(col(r,'duration_min')),distance:parseNum(col(r,'distance_km')),incline:parseNum(col(r,'incline_pct'))} as Entry)).filter(r=>/^\d{4}-\d{2}-\d{2}$/.test(r.date));
+  return lines.map(r=>({date:col(r,'date').trim(),type:col(r,'record_type').trim(),sleep:parseNum(col(r,'sleep_quality_1_10')),energy:parseNum(col(r,'morning_energy_1_10')),soreness:parseNum(col(r,'soreness_1_10')),workout:col(r,'workout_type').trim(),minutes:parseNum(col(r,'duration_min')),distance:parseNum(col(r,'distance_km')),incline:parseNum(col(r,'incline_pct')),item:col(r,'item').trim()||undefined,level:parseNum(col(r,'level')),day_level:parseNum(col(r,'day_level'))} as Entry)).filter(r=>/^\d{4}-\d{2}-\d{2}$/.test(r.date));
 }
 
 const fmtDate=(s:string)=>new Date(s+'T12:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short'});
@@ -31,8 +31,8 @@ const isRun=(w:string)=>/run|5k/i.test(w);
 const fmtAvg=(v:number|null)=>v===null?'—':v.toFixed(1);
 const levelLabel=(l:number|null)=>l===3?'multiple':l===2?'meal':l===1?'snack':'';
 
-// Trailing 3-calendar-day average of reported values only. Returns null when the window has no values.
-function trailing3(vals:(number|null)[],i:number){const w=vals.slice(Math.max(0,i-2),i+1).filter((v):v is number=>v!==null);return{avg:w.length?w.reduce((a,b)=>a+b,0)/w.length:null,n:w.length};}
+// Least-squares linear trend over reported values only, x = calendar-day index of the current view. Null when fewer than 2 reported values.
+function linFit(vals:(number|null)[]){const pts=vals.map((v,i)=>v===null?null:{x:i,y:v as number}).filter(p=>p!==null) as {x:number;y:number}[];if(pts.length<2)return vals.map(()=>null);const n=pts.length,sx=pts.reduce((a,p)=>a+p.x,0),sy=pts.reduce((a,p)=>a+p.y,0),sxx=pts.reduce((a,p)=>a+p.x*p.x,0),sxy=pts.reduce((a,p)=>a+p.x*p.y,0),dn=n*sxx-sx*sx;if(dn===0)return vals.map(()=>null);const b=(n*sxy-sx*sy)/dn,a=(sy-b*sx)/n;return vals.map((_,i)=>a+b*i);}
 
 const foodTitle=(d:{label:string;foodCount:number;food:Entry[]})=>d.foodCount===0?`${d.label}: not reported (unknown)`:`${d.label}: ${d.foodCount} event${d.foodCount>1?'s':''} · ${d.food.map(f=>`${f.item||'junk'}${f.level?` (${levelLabel(f.level)})`:''}`).join(', ')}`;
 
@@ -56,13 +56,15 @@ function App(){
         workoutDay:r.some(x=>x.type==='workout'||x.workout)?1:0,
         food};
     });
-    const sleepVals=base.map(d=>d.sleep),energyVals=base.map(d=>d.energy);
+    const sleepFit=linFit(base.map(d=>d.sleep)),energyFit=linFit(base.map(d=>d.energy));
     return base.map((d,i)=>{
-      const s=trailing3(sleepVals,i),e=trailing3(energyVals,i);
-      // Food: count is per-day frequency; day level is 1 snack / 2 meal for a single event, 3 when multiple events.
-      const count=d.food.length;
-      const dayLevel=count>=2?3:count===1?(d.food[0].level??null):null;
-      return{...d,sleepMA:s.avg,sleepMAN:s.n,energyMA:e.avg,energyMAN:e.n,foodCount:count,foodLevel:dayLevel};
+      // Food: occasion rows carry level (1 snack / 2 meal); daily declarations carry day_level (his explicit day rating, occasion count unknown). Day level = max of declared and occasion-computed.
+      const occ=d.food.filter(f=>f.day_level==null);
+      const decl=d.food.map(f=>f.day_level).filter((v):v is number=>v!=null);
+      const occLevel=occ.length>=2?3:occ.length===1?(occ[0].level??null):null;
+      const lvls=[...(occLevel!=null?[occLevel]:[]),...decl];
+      const dayLevel=lvls.length?Math.max(...lvls):null;
+      return{...d,sleepFit:sleepFit[i],energyFit:energyFit[i],foodCount:occ.length,foodDeclCount:decl.length,foodLevel:dayLevel};
     });
   },[rows,end,range]);
 
@@ -84,9 +86,10 @@ function App(){
   const todayIST=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
   const daysSinceLast=recent?Math.max(0,Math.floor((new Date(todayIST+'T12:00:00').getTime()-new Date(recent.date+'T12:00:00').getTime())/86400000)):null;
 
-  const foodEvents=inView.filter(x=>x.type==='food');
-  const foodDaysWithEvents=view.filter(d=>d.foodCount>0).length;
-  const foodUnreported=view.filter(d=>d.foodCount===0).length;
+  const foodEvents=inView.filter(x=>x.type==='food'&&x.day_level==null);
+  const foodDaysWithEvents=view.filter(d=>d.foodCount>0||d.foodDeclCount>0).length;
+  const foodDeclDays=view.filter(d=>d.foodDeclCount>0).length;
+  const foodUnreported=view.filter(d=>d.foodCount===0&&d.foodDeclCount===0).length;
   const snackCount=foodEvents.filter(f=>(f.level??1)===1).length;
   const mealCount=foodEvents.filter(f=>f.level===2).length;
   const selectedFood=rows.filter(x=>x.date===selected&&x.type==='food');
@@ -97,8 +100,8 @@ function App(){
 
   const maTooltip=(value:any,name:any,item:any)=>{
     const p=item?.payload;
-    if(item?.dataKey==='sleepMA')return[`${Number(value).toFixed(1)} · avg of ${p?.sleepMAN??0} of 3 days`,'Sleep 3-day trend'];
-    if(item?.dataKey==='energyMA')return[`${Number(value).toFixed(1)} · avg of ${p?.energyMAN??0} of 3 days`,'Energy 3-day trend'];
+    if(item?.dataKey==='sleepFit')return[`${Number(value).toFixed(1)} · linear fit of reported days`,'Sleep linear trend'];
+    if(item?.dataKey==='energyFit')return[`${Number(value).toFixed(1)} · linear fit of reported days`,'Energy linear trend'];
     return[value,name];
   };
 
@@ -138,11 +141,11 @@ function App(){
             <ReferenceLine y={7} stroke="#8dad9c" strokeDasharray="4 5"/>
             <Area isAnimationActive={false} type="monotone" dataKey="sleep" name="Sleep quality" stroke="#5baa82" strokeWidth={3} fill="url(#sleepFill)" connectNulls={false} dot={{r:3}} activeDot={{r:6}}/>
             <Area type="monotone" dataKey="energy" name="Morning energy" stroke="#efa758" strokeWidth={3} fill="none" connectNulls={false} dot={{r:3}} activeDot={{r:6}}/>
-            <Area legendType="none" type="monotone" dataKey="sleepMA" name="Sleep 3-day trend" stroke="#347e63" strokeWidth={2} strokeDasharray="5 4" fill="none" connectNulls={false} dot={false}/>
-            <Area legendType="none" type="monotone" dataKey="energyMA" name="Energy 3-day trend" stroke="#c9822f" strokeWidth={2} strokeDasharray="5 4" fill="none" connectNulls={false} dot={false}/>
+            <Area legendType="none" type="linear" dataKey="sleepFit" name="Sleep linear trend" stroke="#347e63" strokeWidth={2} strokeDasharray="5 4" fill="none" connectNulls={false} dot={false}/>
+            <Area legendType="none" type="linear" dataKey="energyFit" name="Energy linear trend" stroke="#c9822f" strokeWidth={2} strokeDasharray="5 4" fill="none" connectNulls={false} dot={false}/>
           </AreaChart>
         </ResponsiveContainer></div>
-        <div className="mini-caption averages"><span><b>Sleep avg</b> {fmtAvg(avgSleep)}</span><span className="sep">·</span><span><b>Energy avg</b> {fmtAvg(avgEnergy)}</span><span className="sep">·</span><span>dashed = trailing 3-day average</span><span className="sep">·</span><span>gaps = no answer</span></div>
+        <div className="mini-caption averages"><span><b>Sleep avg</b> {fmtAvg(avgSleep)}</span><span className="sep">·</span><span><b>Energy avg</b> {fmtAvg(avgEnergy)}</span><span className="sep">·</span><span>dashed = linear trend of reported days</span><span className="sep">·</span><span>gaps = no answer</span></div>
       </article>
       <article className="chart-card">
         <div className="chart-heading"><div><span className="eyebrow">02 / FREQUENCY</span><h3>How consistent you’ve been with exercise</h3></div><span className="chart-note">workout day = 1, even with multiple activities</span></div>
@@ -166,14 +169,14 @@ function App(){
           <CartesianGrid stroke="#e9eeeb" vertical={false}/>
           <XAxis dataKey="label" tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false} interval={range===7?0:4}/>
           <YAxis domain={[0,3]} ticks={[0,1,2,3]} allowDecimals={false} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/>
-          <Tooltip contentStyle={{borderRadius:12,border:'1px solid #e1e9e4',fontSize:12}} cursor={{fill:'#f1f5f2'}} formatter={(v:any,_n:any,item:any)=>[levelLabel(Number(v))+(item?.payload?.foodCount>1?` · ${item.payload.foodCount} events`:''),'Level '+v]}/>
+          <Tooltip contentStyle={{borderRadius:12,border:'1px solid #e1e9e4',fontSize:12}} cursor={{fill:'#f1f5f2'}} formatter={(v:any,_n:any,item:any)=>{const p=item?.payload;const bits:string[]=[];if(p?.foodCount>0)bits.push(`${p.foodCount} known event${p.foodCount>1?'s':''}`);if(p?.foodDeclCount>0)bits.push('day rating, count unknown');const main=p?.foodDeclCount>0&&p?.foodCount===0?'day rating':levelLabel(Number(v));return[main+(bits.length?` · ${bits.join(' · ')}`:''),'Level '+v];}}/>
           <Bar isAnimationActive={false} dataKey="foodLevel" name="Junk food level" radius={[6,6,0,0]} maxBarSize={34}>
             {view.map(d=><Cell key={d.date} fill={d.foodLevel===3?'#d9534a':d.foodLevel===2?'#ef9a3c':'#f2c94c'}/>)}
           </Bar>
         </BarChart>
       </ResponsiveContainer></div>
       <div className="food-legend"><span><i style={{background:'#f2c94c'}}/>1 snack</span><span><i style={{background:'#ef9a3c'}}/>2 meal</span><span><i style={{background:'#d9534a'}}/>3 multiple in a day</span></div>
-      <p className="chart-foot">{foodEvents.length===0?`No junk food reported in this period. ${foodUnreported} day${foodUnreported===1?'':'s'} unreported, unknown not zero.`:`${foodEvents.length} event${foodEvents.length===1?'':'s'} over ${foodDaysWithEvents} day${foodDaysWithEvents===1?'':'s'}${snackCount?` · ${snackCount} snack${snackCount===1?'':'s'}`:""}${mealCount?` · ${mealCount} meal${mealCount===1?'':'s'}`:""}. ${foodUnreported} day${foodUnreported===1?'':'s'} unreported, unknown not zero. Tap a bar for details.`} Same dates as the exercise chart above.</p>
+      <p className="chart-foot">{foodEvents.length===0&&foodDeclDays===0?`No junk food reported in this period. ${foodUnreported} day${foodUnreported===1?'':'s'} unreported, unknown not zero.`:`${foodEvents.length} known event${foodEvents.length===1?'':'s'} over ${foodDaysWithEvents} reported day${foodDaysWithEvents===1?'':'s'}${snackCount?` · ${snackCount} snack${snackCount===1?'':'s'}`:""}${mealCount?` · ${mealCount} meal${mealCount===1?'':'s'}`:""}${foodDeclDays?` · ${foodDeclDays} day${foodDeclDays===1?'':'s'} rated by day level (occasion count unknown)`:""}. ${foodUnreported} day${foodUnreported===1?'':'s'} unreported, unknown not zero. Tap a bar for details.`} Same dates as the exercise chart above.</p>
     </article>
     <div className="lower">
       <article className="chart-card run-card">
@@ -196,7 +199,7 @@ function App(){
         <div className="day-events">
           {rows.filter(x=>x.date===selected&&(x.type==='workout'||x.workout)).map((e,i)=><span key={'w'+i}>{e.workout}{e.minutes!==null?` · ${e.minutes} min`:""}{e.minutes!==null&&e.distance===6?` · ${fmtPace(e.minutes/e.distance)}/km`:""}</span>)}
           {!rows.some(x=>x.date===selected&&(x.type==='workout'||x.workout))&&<span>No workout recorded; not assumed rest.</span>}
-          {selectedFood.map((f,i)=><span key={'f'+i} className="food-event"><UtensilsCrossed size={11}/> {f.item||'junk'}{f.level?` · ${levelLabel(f.level)}`:""}</span>)}
+          {selectedFood.map((f,i)=><span key={'f'+i} className="food-event"><UtensilsCrossed size={11}/> {f.item||'junk'}{f.day_level!=null?` · reported as level ${f.day_level} day (count unknown)`:f.level?` · ${levelLabel(f.level)}`:""}</span>)}
         </div>
       </article>
     </div>
