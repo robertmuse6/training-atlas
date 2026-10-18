@@ -11,17 +11,5 @@
 .mini-caption.averages{font-size:11px;color:#5f7266}
 .mini-caption.averages b{font-weight:800;color:#396d50}
 .mini-caption .sep{color:#c3cfc5}
-.food-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin:20px 0 12px}
-.food-grid.month{grid-template-columns:repeat(7,1fr)}
-.food-cell{border:1px solid #e0e9e1;background:#fff;border-radius:10px;padding:9px 6px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;min-width:0}
-.food-cell:hover{border-color:#b7cdc0}
-.food-cell.sel{border-color:#5baa82;box-shadow:0 0 0 1px #5baa82 inset}
-.food-cell.unknown{background:#f4f7f4}
-.food-date{font-size:9px;color:#849188;white-space:nowrap}
-.food-none{color:#c3cfc5;font-size:14px}
-.food-mark{display:flex;align-items:center;gap:5px}
-.food-mark b{font:800 18px Manrope,sans-serif;color:#33526e}
-.food-mark i{font-style:normal;font-size:9px;font-weight:800;letter-spacing:.04em;color:#5b6f83;background:#e3eaf2;border-radius:5px;padding:3px 5px}
 .day-events .food-event{display:inline-flex;align-items:center;gap:5px;color:#5b6f83}
-@media(max-width:800px){.food-grid{grid-template-columns:repeat(4,1fr)}}
-@media(max-width:430px){.food-grid{grid-template-columns:repeat(3,1fr)}.food-mark b{font-size:15px}}
+.food-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:#6d7b73;margin:6px 0 0}.food-legend span{display:inline-flex;align-items:center;gap:5px}.food-legend i{width:10px;height:10px;border-radius:3px;display:inline-block}

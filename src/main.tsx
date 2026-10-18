@@ -1,6 +1,6 @@
 import React,{useEffect,useMemo,useState} from 'react';
 import{createRoot}from'react-dom/client';
-import{AreaChart,Area,BarChart,Bar,LineChart,Line,XAxis,YAxis,CartesianGrid,Tooltip,Legend,ResponsiveContainer,ReferenceLine}from'recharts';
+import{AreaChart,Area,BarChart,Bar,LineChart,Line,XAxis,YAxis,CartesianGrid,Tooltip,Legend,ResponsiveContainer,ReferenceLine,Cell}from'recharts';
 import{Activity,Moon,Sun,Timer,Upload,Info,ChevronLeft,ChevronRight,UtensilsCrossed}from'lucide-react';
 import './style.css';
 
@@ -160,14 +160,20 @@ function App(){
       </article>
     </div>
     <article className="chart-card food-card">
-      <div className="chart-heading"><div><span className="eyebrow">03 / FOOD</span><h3>How often you ate junk</h3></div><span className="chart-note">level 1 = snack · 2 = meal · 3 = multiple in a day</span></div>
-      <div className={`food-grid ${range===28?'month':''}`}>
-        {view.map(d=><button key={d.date} className={`food-cell ${d.foodCount===0?'unknown':''} ${selected===d.date?'sel':''}`} onClick={()=>setPicked(d.date)} title={foodTitle(d)}>
-          <span className="food-date">{d.label}</span>
-          {d.foodCount===0?<span className="food-none">—</span>:<span className="food-mark"><b>{d.foodCount}</b>{d.foodLevel!==null&&<i>L{d.foodLevel}</i>}</span>}
-        </button>)}
-      </div>
-      <p className="chart-foot">{foodEvents.length===0?`No junk food reported in this period. ${foodUnreported} day${foodUnreported===1?'':'s'} unreported — unknown, not zero.`:`${foodEvents.length} event${foodEvents.length===1?'':'s'} over ${foodDaysWithEvents} day${foodDaysWithEvents===1?'':'s'}${snackCount?` · ${snackCount} snack${snackCount===1?'':'s'}`:""}${mealCount?` · ${mealCount} meal${mealCount===1?'':'s'}`:""}. ${foodUnreported} day${foodUnreported===1?'':'s'} unreported — unknown, not zero.`}</p>
+      <div className="chart-heading"><div><span className="eyebrow">03 / FOOD</span><h3>How often you ate junk</h3></div><span className="chart-note">1 snack · 2 meal · 3 multiple in a day</span></div>
+      <div className="chart-wrap short"><ResponsiveContainer width="100%" height="100%">
+        <BarChart data={view} margin={{top:12,right:3,bottom:3,left:-28}} onClick={s=>s?.activeLabel&&setPicked(view.find(v=>v.label===s.activeLabel)?.date||null)}>
+          <CartesianGrid stroke="#e9eeeb" vertical={false}/>
+          <XAxis dataKey="label" tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false} interval={range===7?0:4}/>
+          <YAxis domain={[0,3]} ticks={[0,1,2,3]} allowDecimals={false} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/>
+          <Tooltip contentStyle={{borderRadius:12,border:'1px solid #e1e9e4',fontSize:12}} cursor={{fill:'#f1f5f2'}} formatter={(v:any,_n:any,item:any)=>[levelLabel(Number(v))+(item?.payload?.foodCount>1?` · ${item.payload.foodCount} events`:''),'Level '+v]}/>
+          <Bar isAnimationActive={false} dataKey="foodLevel" name="Junk food level" radius={[6,6,0,0]} maxBarSize={34}>
+            {view.map(d=><Cell key={d.date} fill={d.foodLevel===3?'#d9534a':d.foodLevel===2?'#ef9a3c':'#f2c94c'}/>)}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer></div>
+      <div className="food-legend"><span><i style={{background:'#f2c94c'}}/>1 snack</span><span><i style={{background:'#ef9a3c'}}/>2 meal</span><span><i style={{background:'#d9534a'}}/>3 multiple in a day</span></div>
+      <p className="chart-foot">{foodEvents.length===0?`No junk food reported in this period. ${foodUnreported} day${foodUnreported===1?'':'s'} unreported, unknown not zero.`:`${foodEvents.length} event${foodEvents.length===1?'':'s'} over ${foodDaysWithEvents} day${foodDaysWithEvents===1?'':'s'}${snackCount?` · ${snackCount} snack${snackCount===1?'':'s'}`:""}${mealCount?` · ${mealCount} meal${mealCount===1?'':'s'}`:""}. ${foodUnreported} day${foodUnreported===1?'':'s'} unreported, unknown not zero. Tap a bar for details.`} Same dates as the exercise chart above.</p>
     </article>
     <div className="lower">
       <article className="chart-card run-card">
