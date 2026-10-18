@@ -94,8 +94,10 @@ function App(){
   const chartH=GRID*ROWS+45;
   const exerTicks=Array.from({length:ROWS+1},(_,k)=>k/ROWS);
   const foodTicks=Array.from({length:ROWS+1},(_,k)=>k*0.5);
-  const wakeStep=Math.max(1,Math.ceil((10-readinessFloor)/ROWS));
-  const wakeTicks=[];for(let t=readinessFloor;t<=10;t+=wakeStep)wakeTicks.push(t);
+  // Six equal grid intervals in every domain; gridline VALUES may be fractional,
+  // labels render only where the value is a readable integer.
+  const wakeSpan=10-readinessFloor;
+  const wakeTicks=Array.from({length:ROWS+1},(_,k)=>readinessFloor+k*wakeSpan/ROWS);
   const paceVals=runPoints.map(p=>p.pace);
   let paceStep=0.25;
   if(paceVals.length){
@@ -154,7 +156,7 @@ function App(){
             <defs><linearGradient id="sleepFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#78bf9d" stopOpacity=".22"/><stop offset="100%" stopColor="#78bf9d" stopOpacity="0"/></linearGradient></defs>
             <CartesianGrid stroke="#e9eeeb" vertical={false}/>
             <XAxis dataKey="label" tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false} interval={range===7?0:4}/>
-            <YAxis domain={[readinessFloor,10]} ticks={wakeTicks} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/>
+            <YAxis domain={[readinessFloor,10]} ticks={wakeTicks} tickFormatter={(v:number)=>(Math.abs(v-Math.round(v))<1e-9?String(Math.round(v)):'')} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/>
             <Tooltip contentStyle={{borderRadius:12,border:'1px solid #e1e9e4',fontSize:12}} formatter={maTooltip}/>
             <ReferenceLine y={7} stroke="#8dad9c" strokeDasharray="4 5"/>
             <Area isAnimationActive={false} type="monotone" dataKey="sleep" name="Sleep quality" stroke="#5baa82" strokeWidth={3} fill="url(#sleepFill)" connectNulls={false} dot={{r:3}} activeDot={{r:6}}/>
