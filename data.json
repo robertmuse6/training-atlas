@@ -418,5 +418,61 @@
     "distance": null,
     "incline": null,
     "notes": "Distance and pace not specified"
+  },
+  {
+    "date": "2026-10-16",
+    "type": "food",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "",
+    "minutes": null,
+    "distance": null,
+    "incline": null,
+    "item": "pizza and two donuts",
+    "level": null,
+    "day_level": 3
+  },
+  {
+    "date": "2026-10-15",
+    "type": "food",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "",
+    "minutes": null,
+    "distance": null,
+    "incline": null,
+    "item": null,
+    "level": 1,
+    "day_level": null
+  },
+  {
+    "date": "2026-10-04",
+    "type": "food",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "",
+    "minutes": null,
+    "distance": null,
+    "incline": null,
+    "item": null,
+    "level": null,
+    "day_level": 3
+  },
+  {
+    "date": "2026-10-01",
+    "type": "food",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "",
+    "minutes": null,
+    "distance": null,
+    "incline": null,
+    "item": null,
+    "level": null,
+    "day_level": 2
   }
 ]
