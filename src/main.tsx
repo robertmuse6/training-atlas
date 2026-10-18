@@ -88,16 +88,23 @@ function App(){
 
   const readinessVals=view.flatMap(d=>[d.sleep,d.energy,d.sleepFit,d.energyFit]).filter((v):v is number=>v!=null);
   const readinessFloor=readinessVals.length?Math.min(4,Math.floor(Math.min(...readinessVals))):4;
-  // Uniformity system: one gridline pitch (px) shared by every chart; each chart's height = pitch x its interval count + fixed chrome.
-  const GRID=42;
+  // Uniformity system: every chart gets the SAME plot height with the SAME gridline pitch.
+  // Each chart uses its own honest tick step; intermediate gridlines stay unlabeled.
+  const GRID=42,ROWS=6;
+  const chartH=GRID*ROWS+45;
+  const exerTicks=Array.from({length:ROWS+1},(_,k)=>k/ROWS);
+  const foodTicks=Array.from({length:ROWS+1},(_,k)=>k*0.5);
   const wakeTicks=Array.from({length:10-readinessFloor+1},(_,k)=>readinessFloor+k);
-  const wakeH=GRID*(10-readinessFloor)+44;
-  const exerH=GRID+45,foodH=GRID*3+45;
+  const wakeH=GRID*Math.max(ROWS,10-readinessFloor)+45;
   const paceVals=runPoints.map(p=>p.pace);
-  let paceLo=paceVals.length?Math.floor(Math.min(...paceVals)*2)/2:6,paceHi=paceVals.length?Math.ceil(Math.max(...paceVals)*2)/2:8;
-  if(paceLo===paceHi){paceLo-=0.5;paceHi+=0.5;}
-  const paceTicks=Array.from({length:Math.round((paceHi-paceLo)*2)+1},(_,k)=>paceLo+k*0.5);
-  const paceH=GRID*(paceHi-paceLo)*2+51;
+  let paceStep=0.25;
+  if(paceVals.length){
+    const span=Math.max(...paceVals)-Math.min(...paceVals);
+    while(paceStep*ROWS<span+0.001)paceStep*=2;
+  }
+  const paceLo=paceVals.length?Math.floor(Math.min(...paceVals)/paceStep)*paceStep:6;
+  const paceHi=paceLo+paceStep*ROWS;
+  const paceTicks=Array.from({length:ROWS+1},(_,k)=>paceLo+k*paceStep);
   const foodEvents=inView.filter(x=>x.type==='food'&&x.day_level==null);
   const foodDeclDays=view.filter(d=>d.foodDeclCount>0).length;
   const foodUnreported=view.filter(d=>d.foodCount===0&&d.foodDeclCount===0).length;
@@ -143,7 +150,7 @@ function App(){
       <article className="chart-card hero-chart">
         <div className="chart-heading"><div><span className="eyebrow">01 / READINESS SIGNALS</span><h3>How you woke up</h3></div><span className="chart-note">1–10 · gaps = no answer</span></div>
         <div className="chart-wrap" style={{height:wakeH}}><ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={view} margin={{top:12,right:12,bottom:2,left:-23}} onClick={s=>s?.activeLabel&&setPicked(view.find(v=>v.label===s.activeLabel)?.date||null)}>
+          <AreaChart data={view} margin={{top:12,right:12,bottom:3,left:-23}} onClick={s=>s?.activeLabel&&setPicked(view.find(v=>v.label===s.activeLabel)?.date||null)}>
             <defs><linearGradient id="sleepFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#78bf9d" stopOpacity=".22"/><stop offset="100%" stopColor="#78bf9d" stopOpacity="0"/></linearGradient></defs>
             <CartesianGrid stroke="#e9eeeb" vertical={false}/>
             <XAxis dataKey="label" tick={{fontSize:11,fill:'#88958e'}} axisLine={false} tickLine={false} interval={range===7?0:4}/>
@@ -162,11 +169,11 @@ function App(){
       </article>
       <article className="chart-card">
         <div className="chart-heading"><div><span className="eyebrow">02 / FREQUENCY</span><h3>How consistent you’ve been with exercise</h3></div><span className="chart-note">workout day = 1, even with multiple activities</span></div>
-        <div className="chart-wrap xshort" style={{height:exerH}}><ResponsiveContainer width="100%" height="100%">
+        <div className="chart-wrap" style={{height:chartH}}><ResponsiveContainer width="100%" height="100%">
           <BarChart data={view} margin={{top:12,right:3,bottom:3,left:-28}} onClick={s=>s?.activeLabel&&setPicked(view.find(v=>v.label===s.activeLabel)?.date||null)}>
             <CartesianGrid stroke="#e9eeeb" vertical={false}/>
             <XAxis dataKey="label" tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false} interval={range===7?0:4}/>
-            <YAxis domain={[0,1]} ticks={[0,1]} allowDecimals={false} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/>
+            <YAxis domain={[0,1]} ticks={exerTicks} tickFormatter={(v:number)=>(Math.abs(v)<1e-9?'0':Math.abs(v-1)<1e-9?'1':'')} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/>
             <Tooltip contentStyle={{borderRadius:12,border:'1px solid #e1e9e4',fontSize:12}}/>
             <Bar isAnimationActive={false} dataKey="workoutDay" name="Workout day" fill="#5baa82" radius={[6,6,0,0]} maxBarSize={34}/>
           </BarChart>
@@ -177,11 +184,11 @@ function App(){
     </div>
     <article className="chart-card food-card">
       <div className="chart-heading"><div><span className="eyebrow">03 / FOOD</span><h3>How often you ate junk</h3></div><span className="chart-note">1 snack · 2 meal · 3 multiple in a day</span></div>
-      <div className="chart-wrap short" style={{height:foodH}}><ResponsiveContainer width="100%" height="100%">
+      <div className="chart-wrap" style={{height:chartH}}><ResponsiveContainer width="100%" height="100%">
         <BarChart data={view} margin={{top:12,right:3,bottom:3,left:-28}} onClick={s=>s?.activeLabel&&setPicked(view.find(v=>v.label===s.activeLabel)?.date||null)}>
           <CartesianGrid stroke="#e9eeeb" vertical={false}/>
           <XAxis dataKey="label" tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false} interval={range===7?0:4}/>
-          <YAxis domain={[0,3]} ticks={[0,1,2,3]} allowDecimals={false} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/>
+          <YAxis domain={[0,3]} ticks={foodTicks} tickFormatter={(v:number)=>(Number.isInteger(v)?String(v):'')} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/>
           <Tooltip contentStyle={{borderRadius:12,border:'1px solid #e1e9e4',fontSize:12}} cursor={{fill:'#f1f5f2'}} formatter={(v:any,_n:any,item:any)=>{const p=item?.payload;const bits:string[]=[];if(p?.foodCount>0)bits.push(`${p.foodCount} known event${p.foodCount>1?'s':''}`);if(p?.foodDeclCount>0)bits.push('day rating, count unknown');const main=p?.foodDeclCount>0&&p?.foodCount===0?'day rating':levelLabel(Number(v));return[main+(bits.length?` · ${bits.join(' · ')}`:''),'Level '+v];}}/>
           <Bar isAnimationActive={false} dataKey="foodLevel" name="Junk food level" radius={[6,6,0,0]} maxBarSize={34}>
             {view.map(d=><Cell key={d.date} fill={d.foodLevel===3?'#d9534a':d.foodLevel===2?'#ef9a3c':'#f2c94c'}/>)}
@@ -195,11 +202,11 @@ function App(){
     <div className="lower">
       <article className="chart-card run-card">
         <div className="chart-heading"><div><span className="eyebrow">04 / 6K PERFORMANCE</span><h3>Tracking my 6K pace</h3></div><span className="chart-note">mm:ss per km · lower is faster</span></div>
-        <div className="chart-wrap short" style={{height:paceH}}><ResponsiveContainer width="100%" height="100%">
-          <LineChart data={runPoints} margin={{top:18,right:20,bottom:3,left:-15}}>
+        <div className="chart-wrap" style={{height:chartH}}><ResponsiveContainer width="100%" height="100%">
+          <LineChart data={runPoints} margin={{top:12,right:20,bottom:3,left:-15}}>
             <CartesianGrid stroke="#e9eeeb" vertical={false}/>
             <XAxis dataKey="label" tick={{fontSize:11,fill:'#88958e'}} axisLine={false} tickLine={false}/>
-            <YAxis domain={[paceLo,paceHi]} ticks={paceTicks} tickFormatter={(v:number)=>fmtPace(v)} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/>
+            <YAxis domain={[paceLo,paceHi]} ticks={paceTicks} tickFormatter={(v:number)=>(Math.abs(v/0.5-Math.round(v/0.5))<1e-9?fmtPace(v):'')} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/>
             <Tooltip formatter={(v:any)=>[`${fmtPace(Number(v))} /km`,'Pace']} contentStyle={{borderRadius:12,border:'1px solid #e1e9e4',fontSize:12}}/>
             <Line isAnimationActive={false} type="monotone" dataKey="pace" name="Pace" stroke="#7a97cc" strokeWidth={3} dot={{r:6,fill:'#7a97cc'}}/>
           </LineChart>
