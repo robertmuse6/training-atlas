@@ -88,6 +88,16 @@ function App(){
 
   const readinessVals=view.flatMap(d=>[d.sleep,d.energy,d.sleepFit,d.energyFit]).filter((v):v is number=>v!=null);
   const readinessFloor=readinessVals.length?Math.min(4,Math.floor(Math.min(...readinessVals))):4;
+  // Uniformity system: one gridline pitch (px) shared by every chart; each chart's height = pitch x its interval count + fixed chrome.
+  const GRID=42;
+  const wakeTicks=Array.from({length:10-readinessFloor+1},(_,k)=>readinessFloor+k);
+  const wakeH=GRID*(10-readinessFloor)+44;
+  const exerH=GRID+45,foodH=GRID*3+45;
+  const paceVals=runPoints.map(p=>p.pace);
+  let paceLo=paceVals.length?Math.floor(Math.min(...paceVals)*2)/2:6,paceHi=paceVals.length?Math.ceil(Math.max(...paceVals)*2)/2:8;
+  if(paceLo===paceHi){paceLo-=0.5;paceHi+=0.5;}
+  const paceTicks=Array.from({length:Math.round((paceHi-paceLo)*2)+1},(_,k)=>paceLo+k*0.5);
+  const paceH=GRID*(paceHi-paceLo)*2+51;
   const foodEvents=inView.filter(x=>x.type==='food'&&x.day_level==null);
   const foodDeclDays=view.filter(d=>d.foodDeclCount>0).length;
   const foodUnreported=view.filter(d=>d.foodCount===0&&d.foodDeclCount===0).length;
@@ -100,6 +110,7 @@ function App(){
   async function upload(f:File|null){if(!f)return;try{const r=parseCSV(await f.text());if(!r.length)throw Error('No dated rows found.');setRows(r);setOffset(0);setPicked(null);setErr('')}catch(e){setErr(e instanceof Error?e.message:'Could not read CSV')}}
 
   const maTooltip=(value:any,name:any,item:any)=>{
+    if(item?.dataKey==='sleepFit'||item?.dataKey==='energyFit')return null;
     const p=item?.payload;
     if(item?.dataKey==='sleepFit')return[`${Number(value).toFixed(1)} · linear fit of reported days`,'Sleep linear trend'];
     if(item?.dataKey==='energyFit')return[`${Number(value).toFixed(1)} · linear fit of reported days`,'Energy linear trend'];
@@ -131,12 +142,12 @@ function App(){
     <div className="chart-grid">
       <article className="chart-card hero-chart">
         <div className="chart-heading"><div><span className="eyebrow">01 / READINESS SIGNALS</span><h3>How you woke up</h3></div><span className="chart-note">1–10 · gaps = no answer</span></div>
-        <div className="chart-wrap"><ResponsiveContainer width="100%" height="100%">
+        <div className="chart-wrap" style={{height:wakeH}}><ResponsiveContainer width="100%" height="100%">
           <AreaChart data={view} margin={{top:12,right:12,bottom:2,left:-23}} onClick={s=>s?.activeLabel&&setPicked(view.find(v=>v.label===s.activeLabel)?.date||null)}>
             <defs><linearGradient id="sleepFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#78bf9d" stopOpacity=".22"/><stop offset="100%" stopColor="#78bf9d" stopOpacity="0"/></linearGradient></defs>
             <CartesianGrid stroke="#e9eeeb" vertical={false}/>
             <XAxis dataKey="label" tick={{fontSize:11,fill:'#88958e'}} axisLine={false} tickLine={false} interval={range===7?0:4}/>
-            <YAxis domain={[readinessFloor,10]} ticks={[readinessFloor,7,10]} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/>
+            <YAxis domain={[readinessFloor,10]} ticks={wakeTicks} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/>
             <Tooltip contentStyle={{borderRadius:12,border:'1px solid #e1e9e4',fontSize:12}} formatter={maTooltip}/>
             <Legend iconType="circle" wrapperStyle={{fontSize:12}}/>
             <ReferenceLine y={7} stroke="#8dad9c" strokeDasharray="4 5"/>
@@ -146,11 +157,12 @@ function App(){
             <Area legendType="none" type="linear" dataKey="energyFit" name="Energy linear trend" stroke="#c9822f" strokeWidth={2} strokeDasharray="5 4" fill="none" connectNulls={false} dot={false}/>
           </AreaChart>
         </ResponsiveContainer></div>
-        <div className="mini-caption averages"><span><b>Sleep avg</b> {fmtAvg(avgSleep)}</span><span className="sep">·</span><span><b>Energy avg</b> {fmtAvg(avgEnergy)}</span><span className="sep">·</span><span>dashed = linear trend of reported days</span><span className="sep">·</span><span>gaps = no answer</span></div>
+        <div className="gap-metrics"><div><b>{fmtAvg(avgSleep)}</b><span>sleep average · this view</span></div><div><b>{fmtAvg(avgEnergy)}</b><span>energy average · this view</span></div></div>
+        <div className="mini-caption"><span>dashed = linear trend of reported days</span><span className="sep">·</span><span>gaps = no answer</span></div>
       </article>
       <article className="chart-card">
         <div className="chart-heading"><div><span className="eyebrow">02 / FREQUENCY</span><h3>How consistent you’ve been with exercise</h3></div><span className="chart-note">workout day = 1, even with multiple activities</span></div>
-        <div className="chart-wrap xshort"><ResponsiveContainer width="100%" height="100%">
+        <div className="chart-wrap xshort" style={{height:exerH}}><ResponsiveContainer width="100%" height="100%">
           <BarChart data={view} margin={{top:12,right:3,bottom:3,left:-28}} onClick={s=>s?.activeLabel&&setPicked(view.find(v=>v.label===s.activeLabel)?.date||null)}>
             <CartesianGrid stroke="#e9eeeb" vertical={false}/>
             <XAxis dataKey="label" tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false} interval={range===7?0:4}/>
@@ -165,7 +177,7 @@ function App(){
     </div>
     <article className="chart-card food-card">
       <div className="chart-heading"><div><span className="eyebrow">03 / FOOD</span><h3>How often you ate junk</h3></div><span className="chart-note">1 snack · 2 meal · 3 multiple in a day</span></div>
-      <div className="chart-wrap short"><ResponsiveContainer width="100%" height="100%">
+      <div className="chart-wrap short" style={{height:foodH}}><ResponsiveContainer width="100%" height="100%">
         <BarChart data={view} margin={{top:12,right:3,bottom:3,left:-28}} onClick={s=>s?.activeLabel&&setPicked(view.find(v=>v.label===s.activeLabel)?.date||null)}>
           <CartesianGrid stroke="#e9eeeb" vertical={false}/>
           <XAxis dataKey="label" tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false} interval={range===7?0:4}/>
@@ -177,16 +189,17 @@ function App(){
         </BarChart>
       </ResponsiveContainer></div>
       <div className="food-legend"><span><i style={{background:'#f2c94c'}}/>1 snack</span><span><i style={{background:'#ef9a3c'}}/>2 meal</span><span><i style={{background:'#d9534a'}}/>3 multiple in a day</span></div>
-      <p className="chart-foot">{daysSinceJunk===null?<>No junk food logged yet. </>:<><b>{daysSinceJunk}</b> day{daysSinceJunk===1?'':'s'} since your last logged junk day ({fmtDate(lastFoodDate!)}). </>}{foodUnreported} day{foodUnreported===1?'':'s'} unreported, unknown not zero.{foodEvents.length>0||foodDeclDays>0?' Tap a bar for details.':''} Same dates as the exercise chart above.</p>
+      <div className="gap-metrics single"><div><b>{daysSinceJunk===null?"—":daysSinceJunk} <small>days</small></b><span>{daysSinceJunk===null?'No junk food logged yet':`since your last logged junk day (${fmtDate(lastFoodDate!)})`}</span></div></div>
+      <p className="chart-foot">{foodUnreported} day{foodUnreported===1?'':'s'} unreported, unknown not zero.{foodEvents.length>0||foodDeclDays>0?' Tap a bar for details.':''} Same dates as the exercise chart above.</p>
     </article>
     <div className="lower">
       <article className="chart-card run-card">
         <div className="chart-heading"><div><span className="eyebrow">04 / 6K PERFORMANCE</span><h3>Tracking my 6K pace</h3></div><span className="chart-note">mm:ss per km · lower is faster</span></div>
-        <div className="chart-wrap short"><ResponsiveContainer width="100%" height="100%">
+        <div className="chart-wrap short" style={{height:paceH}}><ResponsiveContainer width="100%" height="100%">
           <LineChart data={runPoints} margin={{top:18,right:20,bottom:3,left:-15}}>
             <CartesianGrid stroke="#e9eeeb" vertical={false}/>
             <XAxis dataKey="label" tick={{fontSize:11,fill:'#88958e'}} axisLine={false} tickLine={false}/>
-            <YAxis domain={['auto','auto']} tickFormatter={(v:number)=>fmtPace(v)} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/>
+            <YAxis domain={[paceLo,paceHi]} ticks={paceTicks} tickFormatter={(v:number)=>fmtPace(v)} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/>
             <Tooltip formatter={(v:any)=>[`${fmtPace(Number(v))} /km`,'Pace']} contentStyle={{borderRadius:12,border:'1px solid #e1e9e4',fontSize:12}}/>
             <Line isAnimationActive={false} type="monotone" dataKey="pace" name="Pace" stroke="#7a97cc" strokeWidth={3} dot={{r:6,fill:'#7a97cc'}}/>
           </LineChart>
