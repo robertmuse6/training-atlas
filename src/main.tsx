@@ -94,8 +94,8 @@ function App(){
   const chartH=GRID*ROWS+45;
   const exerTicks=Array.from({length:ROWS+1},(_,k)=>k/ROWS);
   const foodTicks=Array.from({length:ROWS+1},(_,k)=>k*0.5);
-  const wakeTicks=Array.from({length:10-readinessFloor+1},(_,k)=>readinessFloor+k);
-  const wakeH=GRID*Math.max(ROWS,10-readinessFloor)+45;
+  const wakeStep=Math.max(1,Math.ceil((10-readinessFloor)/ROWS));
+  const wakeTicks=[];for(let t=readinessFloor;t<=10;t+=wakeStep)wakeTicks.push(t);
   const paceVals=runPoints.map(p=>p.pace);
   let paceStep=0.25;
   if(paceVals.length){
@@ -149,14 +149,13 @@ function App(){
     <div className="chart-grid">
       <article className="chart-card hero-chart">
         <div className="chart-heading"><div><span className="eyebrow">01 / READINESS SIGNALS</span><h3>How you woke up</h3></div><span className="chart-note">1–10 · gaps = no answer</span></div>
-        <div className="chart-wrap" style={{height:wakeH}}><ResponsiveContainer width="100%" height="100%">
+        <div className="chart-wrap" style={{height:chartH}}><ResponsiveContainer width="100%" height="100%">
           <AreaChart data={view} margin={{top:12,right:12,bottom:3,left:-23}} onClick={s=>s?.activeLabel&&setPicked(view.find(v=>v.label===s.activeLabel)?.date||null)}>
             <defs><linearGradient id="sleepFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#78bf9d" stopOpacity=".22"/><stop offset="100%" stopColor="#78bf9d" stopOpacity="0"/></linearGradient></defs>
             <CartesianGrid stroke="#e9eeeb" vertical={false}/>
-            <XAxis dataKey="label" tick={{fontSize:11,fill:'#88958e'}} axisLine={false} tickLine={false} interval={range===7?0:4}/>
+            <XAxis dataKey="label" tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false} interval={range===7?0:4}/>
             <YAxis domain={[readinessFloor,10]} ticks={wakeTicks} tick={{fontSize:10,fill:'#88958e'}} axisLine={false} tickLine={false}/>
             <Tooltip contentStyle={{borderRadius:12,border:'1px solid #e1e9e4',fontSize:12}} formatter={maTooltip}/>
-            <Legend iconType="circle" wrapperStyle={{fontSize:12}}/>
             <ReferenceLine y={7} stroke="#8dad9c" strokeDasharray="4 5"/>
             <Area isAnimationActive={false} type="monotone" dataKey="sleep" name="Sleep quality" stroke="#5baa82" strokeWidth={3} fill="url(#sleepFill)" connectNulls={false} dot={{r:3}} activeDot={{r:6}}/>
             <Area type="monotone" dataKey="energy" name="Morning energy" stroke="#efa758" strokeWidth={3} fill="none" connectNulls={false} dot={{r:3}} activeDot={{r:6}}/>
@@ -164,6 +163,7 @@ function App(){
             <Area legendType="none" type="linear" dataKey="energyFit" name="Energy linear trend" stroke="#c9822f" strokeWidth={2} strokeDasharray="5 4" fill="none" connectNulls={false} dot={false}/>
           </AreaChart>
         </ResponsiveContainer></div>
+        <div className="food-legend"><span><i style={{background:'#efa758'}}/>Morning energy</span><span><i style={{background:'#5baa82'}}/>Sleep quality</span></div>
         <div className="gap-metrics"><div><b>{fmtAvg(avgSleep)}</b><span>sleep average · this view</span></div><div><b>{fmtAvg(avgEnergy)}</b><span>energy average · this view</span></div></div>
         <div className="mini-caption"><span>dashed = linear trend of reported days</span><span className="sep">·</span><span>gaps = no answer</span></div>
       </article>
