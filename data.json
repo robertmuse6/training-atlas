@@ -485,5 +485,19 @@
   "minutes": null,
   "distance": null,
   "incline": null
+ },
+ {
+  "date": "2026-10-19",
+  "day_level": null,
+  "distance": null,
+  "energy": null,
+  "incline": null,
+  "item": null,
+  "level": 2,
+  "minutes": null,
+  "sleep": null,
+  "soreness": null,
+  "type": "food",
+  "workout": ""
  }
 ]
