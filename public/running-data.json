@@ -42,6 +42,14 @@
     "km": 0,
     "time_min": 0,
     "avg_pace": null
+   },
+   "unspecified": {
+    "sessions": 0,
+    "km": 0,
+    "time_min": 0,
+    "avg_pace": null,
+    "labels": [],
+    "note": "not yet classified; counted in totals, kept out of per-type pace trends"
    }
   },
   "pace_delta_wow": {
@@ -67,7 +75,7 @@
   "cheat_score": {
    "status": "ok",
    "points": 19,
-   "pct": 90,
+   "pct": 90.5,
    "known_deductions": 2,
    "penalties": [
     {
