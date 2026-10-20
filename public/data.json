@@ -510,5 +510,17 @@
     "minutes": null,
     "distance": null,
     "incline": null
+  },
+  {
+    "date": "2026-10-20",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "speed run",
+    "minutes": null,
+    "distance": null,
+    "incline": null,
+    "notes": "Distance and duration not specified"
   }
 ]
