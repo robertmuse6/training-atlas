@@ -1,30 +1,115 @@
 {
-  "updated": "2026-10-20T21:00:00+05:30",
-  "weekly": {
-    "week_start": "2026-10-19",
-    "totals": { "km": 0, "moving_time_min": 0 },
-    "by_type": {
-      "strength":  { "sessions": 0, "time_min": 0 },
-      "recovery":  { "sessions": 0, "km": 0, "time_min": 0, "avg_pace": null },
-      "5k":        { "sessions": 0, "km": 0, "time_min": 0, "avg_pace": null },
-      "tempo":     { "sessions": 0, "km": 0, "time_min": 0, "avg_pace": null },
-      "intervals": { "sessions": 0, "km": 0, "time_min": 0, "avg_pace": null },
-      "threshold": { "sessions": 0, "km": 0, "time_min": 0, "avg_pace": null }
-    },
-    "pace_delta_wow": { "recovery": null, "5k": null, "tempo": null, "intervals": null, "threshold": null },
-    "vo2max": { "current": null, "trend": [] },
-    "zone2": { "minutes": 0, "pct_of_moving": 0, "delta_minutes_wow": null },
-    "resting_hr": { "avg_7d": null, "rate_of_change_per_week": null },
-    "cheat_score": { "points": 21, "pct": 100, "penalties": [] },
-    "recovery_context": false
+ "updated": "2026-10-20T09:45:00+05:30",
+ "weekly": {
+  "week_start": "2026-10-19",
+  "data_status": "pending",
+  "window_complete": false,
+  "totals": {
+   "km": null,
+   "moving_time_min": null
   },
-  "monthly": {
-    "lactate_threshold": { "status": "pending_sensor", "history": [] },
-    "acute_load": { "source": "garmin", "current": null, "rate_of_change": null },
-    "readiness_audit": { "observations": 0, "tp": 0, "fp": 0, "tn": 0, "fn": 0, "note": "pattern check, not statistics" }
+  "by_type": {
+   "strength": {
+    "sessions": 0,
+    "time_min": 0
+   },
+   "recovery": {
+    "sessions": 0,
+    "km": 0,
+    "time_min": 0,
+    "avg_pace": null
+   },
+   "5k": {
+    "sessions": 0,
+    "km": 0,
+    "time_min": 0,
+    "avg_pace": null
+   },
+   "tempo": {
+    "sessions": 0,
+    "km": 0,
+    "time_min": 0,
+    "avg_pace": null
+   },
+   "intervals": {
+    "sessions": 0,
+    "km": 0,
+    "time_min": 0,
+    "avg_pace": null
+   },
+   "threshold": {
+    "sessions": 0,
+    "km": 0,
+    "time_min": 0,
+    "avg_pace": null
+   }
   },
-  "targets": [
-    { "date": "2026-11-15", "label": "Baseline to build checkpoint" },
-    { "date": "Jan 15", "label": "Half marathon target (Nike Run Club)" }
-  ]
+  "pace_delta_wow": {
+   "recovery": null,
+   "5k": null,
+   "tempo": null,
+   "intervals": null,
+   "threshold": null
+  },
+  "vo2max": {
+   "current": null,
+   "trend": []
+  },
+  "zone2": {
+   "minutes": 0,
+   "pct_of_moving": 0,
+   "delta_minutes_wow": null
+  },
+  "resting_hr": {
+   "avg_7d": null,
+   "rate_of_change_per_week": null
+  },
+  "cheat_score": {
+   "status": "ok",
+   "points": 19,
+   "pct": 90,
+   "known_deductions": 2,
+   "penalties": [
+    {
+     "date": "2026-10-19",
+     "level": 2,
+     "cost": 2
+    }
+   ],
+   "rules": {
+    "l1_penalty": 1,
+    "l2_penalty": 2
+   }
+  },
+  "recovery_context": false
+ },
+ "monthly": {
+  "lactate_threshold": {
+   "status": "pending_sensor",
+   "history": []
+  },
+  "acute_load": {
+   "source": "garmin",
+   "current": null,
+   "rate_of_change": null
+  },
+  "readiness_audit": {
+   "observations": 0,
+   "tp": 0,
+   "fp": 0,
+   "tn": 0,
+   "fn": 0,
+   "note": "pattern check, not statistics"
+  }
+ },
+ "targets": [
+  {
+   "date": "2026-11-15",
+   "label": "Baseline to build checkpoint"
+  },
+  {
+   "date": "Jan 15",
+   "label": "Half marathon target (Nike Run Club)"
+  }
+ ]
 }
