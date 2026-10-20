@@ -86,6 +86,22 @@ function App(){
   const todayIST=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
   const daysSinceLast=recent?Math.max(0,Math.floor((new Date(todayIST+'T12:00:00').getTime()-new Date(recent.date+'T12:00:00').getTime())/86400000)):null;
 
+  // Anti-cheat score ("How good have you been?"): 3 points per day, minus each day's cheat level (1/2/3). Unlogged days keep full points by design.
+  const foodDayLevel=(fs:Entry[])=>{const occ=fs.filter(f=>f.day_level==null);const decl=fs.map(f=>f.day_level).filter((v):v is number=>v!=null);const occLevel=occ.length>=2?3:occ.length===1?(occ[0].level??null):null;const lv=[...(occLevel!=null?[occLevel]:[]),...decl];return lv.length?Math.max(...lv):0;};
+  const foodByDate=new Map<string,Entry[]>();
+  rows.filter(r=>r.type==='food').forEach(r=>{const a=foodByDate.get(r.date)||[];a.push(r);foodByDate.set(r.date,a);});
+  const viewPenalty=view.reduce((sum,d)=>sum+(d.foodLevel??0),0);
+  const possible=3*range;
+  const antiScore=Math.round((possible-viewPenalty)/possible*1000)/10;
+  const firstFood=rows.filter(r=>r.type==='food').map(r=>r.date).sort()[0];
+  let avgScore:number|null=null;
+  if(firstFood){
+    const span=Math.round((new Date(anchor+'T12:00:00').getTime()-new Date(firstFood+'T12:00:00').getTime())/86400000)+1;
+    const histDays=dates(anchor,span);
+    const histPenalty=histDays.reduce((sum,dt)=>sum+foodDayLevel(foodByDate.get(dt)||[]),0);
+    avgScore=Math.round((3*span-histPenalty)/(3*span)*1000)/10;
+  }
+
   const readinessVals=view.flatMap(d=>[d.sleep,d.energy,d.sleepFit,d.energyFit]).filter((v):v is number=>v!=null);
   const readinessFloor=readinessVals.length?Math.min(4,Math.floor(Math.min(...readinessVals))):4;
   // Uniformity system: every chart gets the SAME plot height with the SAME gridline pitch.
@@ -142,7 +158,7 @@ function App(){
       <article className="stat"><div className="stat-label"><Moon size={17}/> GOOD SLEEP</div><strong>{loggedSleep?goodSleep:'—'}<small>/{range} days</small></strong><span>{loggedSleep?`${loggedSleep} days with ratings`:'No ratings yet'} · green at 7+/10</span></article>
       <article className="stat"><div className="stat-label"><Sun size={17}/> ENERGETIC MORNINGS</div><strong>{loggedEnergy?goodEnergy:'—'}<small>/{range} days</small></strong><span>{loggedEnergy?`${loggedEnergy} mornings rated`:'No ratings yet'} · green at 7+/10</span></article>
       <article className={`stat exercise ${exerciseTier}`}><div className="stat-label"><Activity size={17}/> WORKOUT DAYS</div><strong>{activeDays}<small>/{range} days</small></strong><span>{range===7?activeDays>=4?"Green · 4+ workout days":activeDays===3?"Orange · 3 workout days":"Red · fewer than 3 workout days":"Weekly goal: 4+ days green, 3 orange, fewer red"}</span></article>
-      <article className="stat"><div className="stat-label"><Timer size={17}/> 6K PACE</div><strong>{pacePct===null?'—':`${pacePct>0?'+':''}${pacePct.toFixed(1)}`}<small>% change</small></strong><span>{runs.length===1?`1 timed 6K baseline · ${fmtPace(runPoints[0].pace)}/km`:runs.length===0?'No timed 6K runs':`${runs.length} timed 6K runs recorded`}</span></article>
+      <article className={`stat exercise ${antiScore>=86?'green':antiScore>=67?'orange':'red'}`}><div className="stat-label"><UtensilsCrossed size={17}/> ANTI-CHEAT · HOW GOOD HAVE YOU BEEN?</div><strong>{antiScore}%<small> · {possible-viewPenalty}/{possible} {range===7?'this week':'these 28 days'}</small></strong><span>Average score {avgScore===null?'not enough history':`${avgScore}%`} · eating out per month: not tracked yet</span><span>3 points a day minus each cheat level (−1 snack, −2 meal, −3 level 3). Unlogged days keep full points by design.</span></article>
     </div>
     <div className="section-head">
       <div><div className="kicker">THE WHOLE PICTURE</div><h2>Sleep, energy, food, and what training costs.</h2></div>
