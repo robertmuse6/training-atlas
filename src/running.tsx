@@ -16,7 +16,7 @@ type RunningData={
     vo2max:{current:number|null;trend:{week:string;value:number}[]};
     zone2:{minutes:number;pct_of_moving:number;delta_minutes_wow:number|null};
     resting_hr:{avg_7d:number|null;rate_of_change_per_week:number|null};
-    cheat_score:{status?:string;points:number|null;pct:number|null;known_deductions?:number;penalties:{date:string;level:number;cost:number}[];rules?:{l1_penalty:number;l2_penalty:number}};
+    cheat_score:{status?:string;points:number|null;pct:number|null;known_deductions?:number;penalties:{date:string;level:number;cost:number}[];rules?:{l1_penalty:number;l2_penalty:number;l3_penalty?:number}};
     recovery_context:boolean;
   };
   monthly:{
@@ -42,7 +42,6 @@ function App(){
   const w=data.weekly,m=data.monthly;
   const synced=w.data_status?w.data_status!=='pending':((w.totals.km??0)>0||(w.totals.moving_time_min??0)>0||w.vo2max.current!==null||w.resting_hr.avg_7d!==null);
   const cs=w.cheat_score;
-  const csPending=cs.status==='unresolved_pending_level3_mapping';
   const audit=m.readiness_audit;
   return<div className="shell">
     <div className="topline">
@@ -62,7 +61,7 @@ function App(){
       <article className="stat exercise green"><div className="stat-label"><Footprints size={15}/> THIS WEEK · DISTANCE</div><strong>{(w.totals.km??0)>0?w.totals.km!.toFixed(1):'Pending'}<small>{(w.totals.km??0)>0?' km':''}</small></strong><span>week of {fmtWeek(w.week_start)}</span></article>
       <article className="stat exercise green"><div className="stat-label"><Timer size={15}/> THIS WEEK · MOVING TIME</div><strong>{(w.totals.moving_time_min??0)>0?fmtMin(w.totals.moving_time_min!):'Pending'}</strong><span>all activities, one bucket each</span></article>
       <article className="stat exercise green"><div className="stat-label"><Gauge size={15}/> VO2 MAX</div><strong>{w.vo2max.current??'Pending'}</strong><span>Garmin's own estimate · needs eligible outdoor GPS runs</span></article>
-      <article className={`stat exercise ${csPending?'neutral':(cs.pct??100)>=86?'green':(cs.pct??100)>=67?'orange':'red'}`}><div className="stat-label"><UtensilsCrossed size={15}/> CHEAT SCORE</div><strong>{csPending?'pending':`${cs.pct}%`}<small>{csPending?'':` · ${cs.points}/21`}</small></strong><span>{csPending?'level-3 day this week · mapping undecided':'21 points a week · snack −1 · meal −2'}</span></article>
+      <article className={`stat exercise ${(cs.pct??100)>=86?'green':(cs.pct??100)>=67?'orange':'red'}`}><div className="stat-label"><UtensilsCrossed size={15}/> CHEAT SCORE</div><strong>{`${cs.pct}%`}<small>{` · ${cs.points}/21`}</small></strong><span>21 points a week · snack −1 · meal −2 · level 3 −3</span></article>
     </div>
 
     <div className="section-head"><div><div className="kicker">EVERY WEEK</div><h2>Volume, pace, zone 2 and recovery signals.</h2></div></div>
@@ -101,13 +100,12 @@ function App(){
       </article>
 
       <article className="chart-card">
-        <div className="chart-heading"><div><div className="kicker">04 / CHEAT SCORE</div><h3>21 points a week, spent on junk</h3></div><span className="chart-note">{csPending?'pending':`${cs.pct}%`}</span></div>
-        {csPending&&<div className="pending-box">A level-3 day happened this week and its scoring rule is still undecided, so the final score is pending. Known deductions so far: −{cs.known_deductions??0} from logged level-1/2 events. An undecided penalty never shows as no penalty.</div>}
+        <div className="chart-heading"><div><div className="kicker">04 / CHEAT SCORE</div><h3>21 points a week, spent on junk</h3></div><span className="chart-note">{`${cs.pct}%`}</span></div>
         {cs.penalties.length>0?<table className="type-table"><thead><tr><th>Day</th><th>Event</th><th>Cost</th></tr></thead><tbody>
           {cs.penalties.map((p,i)=><tr key={i}><td>{fmtWeek(p.date)}</td><td>{p.level===1?'snack':p.level===2?'meal':'multiple'}</td><td>−{p.cost}</td></tr>)}
         </tbody></table>
         :<div className="pending-box">No penalties logged this week. Days with no food log count zero penalty because that is how the score is designed ("21 out of 21 naturally"), not because those days are verified clean. Starting at 21 is the assumed baseline, not proof. Atlas page 1 keeps treating unlogged days as unknown.</div>}
-        <p className="chart-foot">Per event, as you defined it: each logged level-1 event costs 1 point, each level-2 event costs 2, and the score is always a percentage of 21. No daily cap. The starting 21 is the score's assumed baseline, not proof that unlogged days were clean. The rule for level-3 days is unset, so any week with one shows its final score as pending, with the known deduction subtotal visible.</p>
+        <p className="chart-foot">Per event, as you defined it: each logged level-1 event costs 1 point, each level-2 event costs 2, each level-3 event costs 3. The score is always a percentage of 21 points for the calendar week, Monday to Sunday. No daily cap. The starting 21 is the assumed baseline, not proof that unlogged days were clean.</p>
       </article>
     </div>
 

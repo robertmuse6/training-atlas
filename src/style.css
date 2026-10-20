@@ -30,3 +30,5 @@
 .chart-card.target h3{font-size:17px}
 @media(max-width:900px){.chart-grid.three{grid-template-columns:1fr}}
 @media(max-width:430px){.type-table{font-size:11px}.type-table td{padding:7px 5px}}
+
+.stat strong small{white-space:nowrap}.stat .stat-sub{font-size:11px;color:#7d8b7e}.anti-note{font-size:10px;color:#7d8b7e;margin-top:2px}.anti-note summary{cursor:pointer;font-weight:700;color:#60816d;list-style:none}.anti-note summary::-webkit-details-marker{display:none}.anti-note summary::before{content:'+ ';font-weight:800}.anti-note[open] summary::before{content:'− '}

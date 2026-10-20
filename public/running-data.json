@@ -86,7 +86,8 @@
    ],
    "rules": {
     "l1_penalty": 1,
-    "l2_penalty": 2
+    "l2_penalty": 2,
+    "l3_penalty": 3
    }
   },
   "recovery_context": false
