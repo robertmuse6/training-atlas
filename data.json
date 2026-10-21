@@ -522,5 +522,16 @@
     "distance": null,
     "incline": null,
     "notes": "Distance and duration not specified"
+  },
+  {
+    "date": "2026-10-21",
+    "type": "morning",
+    "sleep": 3,
+    "energy": 5,
+    "soreness": null,
+    "workout": null,
+    "minutes": null,
+    "distance": null,
+    "incline": null
   }
 ]
