@@ -619,5 +619,20 @@
     "distance": null,
     "incline": null,
     "notes": "Workout detail from follow-up phonemsg-01M5S58534VQKCRBFF2QF91AJV"
+  },
+  {
+    "date": "2026-10-25",
+    "type": "food",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "",
+    "minutes": null,
+    "distance": null,
+    "incline": null,
+    "item": null,
+    "level": null,
+    "day_level": 2,
+    "notes": "User reported Level 2 food day"
   }
 ]
