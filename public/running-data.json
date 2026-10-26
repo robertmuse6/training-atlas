@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-26T08:10:00+05:30",
+ "updated": "2026-10-26T21:14:00+05:30",
  "weekly": {
   "week_start": "2026-10-26",
   "data_status": "partial",
@@ -70,7 +70,7 @@
   },
   "resting_hr": {
    "avg_7d": 63,
-   "as_of": "2026-10-25",
+   "as_of": "2026-10-26",
    "rate_of_change_per_week": null
   },
   "cheat_score": {
