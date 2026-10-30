@@ -689,5 +689,17 @@
     "minutes": null,
     "distance": null,
     "incline": null
+  },
+  {
+    "date": "2026-10-30",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "speed run",
+    "minutes": 30.0,
+    "distance": null,
+    "incline": null,
+    "notes": "Biceps"
   }
 ]
