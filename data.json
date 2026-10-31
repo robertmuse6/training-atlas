@@ -701,5 +701,46 @@
     "distance": null,
     "incline": null,
     "notes": "Biceps"
+  },
+  {
+    "date": "2026-10-30",
+    "type": "food",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "",
+    "minutes": null,
+    "distance": null,
+    "incline": null,
+    "item": null,
+    "level": null,
+    "day_level": 2,
+    "notes": "User reported Level 2 food day"
+  },
+  {
+    "date": "2026-10-31",
+    "type": "food",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "",
+    "minutes": null,
+    "distance": null,
+    "incline": null,
+    "item": null,
+    "level": null,
+    "day_level": 3,
+    "notes": "User reported Level 3 food day"
+  },
+  {
+    "date": "2026-10-31",
+    "type": "morning",
+    "sleep": 8,
+    "energy": 7,
+    "soreness": null,
+    "workout": null,
+    "minutes": null,
+    "distance": null,
+    "incline": null
   }
 ]
