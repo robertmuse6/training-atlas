@@ -742,5 +742,17 @@
     "minutes": null,
     "distance": null,
     "incline": null
+  },
+  {
+    "date": "2026-10-31",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "recovery run",
+    "minutes": null,
+    "distance": null,
+    "incline": null,
+    "notes": "Distance and duration not specified"
   }
 ]
