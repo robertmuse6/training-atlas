@@ -7,7 +7,7 @@
     "soreness": null,
     "workout": "5K run",
     "minutes": null,
-    "distance": 5.0,
+    "distance": 5,
     "incline": null,
     "notes": "First untimed 5K with Dia"
   },
@@ -18,8 +18,8 @@
     "energy": null,
     "soreness": null,
     "workout": "5K run",
-    "minutes": 30.0,
-    "distance": 5.0,
+    "minutes": 30,
+    "distance": 5,
     "incline": null,
     "notes": "5K in 30 minutes"
   },
@@ -52,9 +52,9 @@
     "energy": null,
     "soreness": null,
     "workout": "incline walk",
-    "minutes": 20.0,
+    "minutes": 20,
     "distance": null,
-    "incline": 15.0
+    "incline": 15
   },
   {
     "date": "2026-09-28",
@@ -132,7 +132,7 @@
     "soreness": null,
     "workout": "6K run",
     "minutes": 42.5,
-    "distance": 6.0,
+    "distance": 6,
     "incline": null,
     "notes": "6 km run; pace 7:05/km; new tracked benchmark"
   },
@@ -154,7 +154,7 @@
     "energy": null,
     "soreness": 7,
     "workout": "incline walk + biceps",
-    "minutes": 20.0,
+    "minutes": 20,
     "distance": null,
     "incline": null,
     "notes": "20 min incline walking + biceps; soreness scale: higher value = worse"
@@ -189,7 +189,7 @@
     "energy": null,
     "soreness": null,
     "workout": "incline walk",
-    "minutes": 20.0,
+    "minutes": 20,
     "distance": null,
     "incline": null,
     "notes": "13 min intense intervals (4 + 4 + 5); user-reported new endurance record (no prior baseline verified)"
@@ -247,8 +247,8 @@
     "energy": null,
     "soreness": null,
     "workout": "6K run",
-    "minutes": 40.0,
-    "distance": 6.0,
+    "minutes": 40,
+    "distance": 6,
     "incline": null,
     "notes": "6 km run; pace 6:40/km (interpreting message as per-km pace)"
   },
@@ -281,7 +281,7 @@
     "energy": null,
     "soreness": null,
     "workout": "run",
-    "minutes": 15.0,
+    "minutes": 15,
     "distance": null,
     "incline": null,
     "notes": "Easy run; distance and pace not specified"
@@ -414,7 +414,7 @@
     "energy": null,
     "soreness": null,
     "workout": "jog",
-    "minutes": 15.0,
+    "minutes": 15,
     "distance": null,
     "incline": null,
     "notes": "Distance and pace not specified"
@@ -615,7 +615,7 @@
     "energy": null,
     "soreness": null,
     "workout": "Leg day",
-    "minutes": 60.0,
+    "minutes": 60,
     "distance": null,
     "incline": null,
     "notes": "Workout detail from follow-up phonemsg-01M5S58534VQKCRBFF2QF91AJV"
@@ -697,7 +697,7 @@
     "energy": null,
     "soreness": null,
     "workout": "speed run",
-    "minutes": 30.0,
+    "minutes": 30,
     "distance": null,
     "incline": null,
     "notes": "Biceps"
@@ -769,5 +769,16 @@
     "level": null,
     "day_level": 2,
     "notes": "User reported eating out, Level 2"
+  },
+  {
+    "date": "2026-11-01",
+    "type": "morning",
+    "sleep": 6,
+    "energy": 6,
+    "soreness": null,
+    "workout": null,
+    "minutes": null,
+    "distance": null,
+    "incline": null
   }
 ]
