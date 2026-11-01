@@ -754,5 +754,20 @@
     "distance": null,
     "incline": null,
     "notes": "Distance and duration not specified"
+  },
+  {
+    "date": "2026-11-01",
+    "type": "food",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "",
+    "minutes": null,
+    "distance": null,
+    "incline": null,
+    "item": null,
+    "level": null,
+    "day_level": 2,
+    "notes": "User reported eating out, Level 2"
   }
 ]
