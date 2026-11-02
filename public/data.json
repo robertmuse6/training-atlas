@@ -791,5 +791,17 @@
     "minutes": null,
     "distance": null,
     "incline": null
+  },
+  {
+    "date": "2026-11-02",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "recovery run + triceps",
+    "minutes": null,
+    "distance": null,
+    "incline": null,
+    "notes": "Duration, distance, and pace not specified"
   }
 ]
