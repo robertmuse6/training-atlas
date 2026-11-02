@@ -1,7 +1,7 @@
 {
- "updated": "2026-11-01T20:53:00+05:30",
+ "updated": "2026-11-02T09:25:00+05:30",
  "weekly": {
-  "week_start": "2026-10-26",
+  "week_start": "2026-11-02",
   "data_status": "partial",
   "window_complete": false,
   "totals": {
@@ -75,26 +75,10 @@
   },
   "cheat_score": {
    "status": "ok",
-   "points": 14,
-   "pct": 66.7,
-   "known_deductions": 7,
-   "penalties": [
-    {
-     "date": "2026-10-30",
-     "level": 2,
-     "cost": 2
-    },
-    {
-     "date": "2026-10-31",
-     "level": 3,
-     "cost": 3
-    },
-    {
-     "date": "2026-11-01",
-     "level": 2,
-     "cost": 2
-    }
-   ],
+   "points": 21,
+   "pct": 100.0,
+   "known_deductions": 0,
+   "penalties": [],
    "previous_weeks": [
     {
      "week_start": "2026-10-19",
@@ -119,6 +103,29 @@
       },
       {
        "date": "2026-10-25",
+       "level": 2,
+       "cost": 2
+      }
+     ]
+    },
+    {
+     "week_start": "2026-10-26",
+     "points": 14,
+     "pct": 66.7,
+     "known_deductions": 7,
+     "penalties": [
+      {
+       "date": "2026-10-30",
+       "level": 2,
+       "cost": 2
+      },
+      {
+       "date": "2026-10-31",
+       "level": 3,
+       "cost": 3
+      },
+      {
+       "date": "2026-11-01",
        "level": 2,
        "cost": 2
       }
