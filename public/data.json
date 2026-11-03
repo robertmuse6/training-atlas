@@ -803,5 +803,16 @@
     "distance": null,
     "incline": null,
     "notes": "Duration, distance, and pace not specified"
+  },
+  {
+    "date": "2026-11-03",
+    "type": "morning",
+    "sleep": 8,
+    "energy": 8,
+    "soreness": null,
+    "workout": null,
+    "minutes": null,
+    "distance": null,
+    "incline": null
   }
 ]
