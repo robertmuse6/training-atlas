@@ -814,5 +814,17 @@
     "minutes": null,
     "distance": null,
     "incline": null
+  },
+  {
+    "date": "2026-11-03",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "3K run",
+    "minutes": null,
+    "distance": 3,
+    "incline": null,
+    "notes": "Duration and pace not specified"
   }
 ]
