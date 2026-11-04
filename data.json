@@ -841,5 +841,16 @@
     "level": null,
     "day_level": 1,
     "notes": "User reported Level 1 food day"
+  },
+  {
+    "date": "2026-11-04",
+    "type": "morning",
+    "sleep": 8,
+    "energy": 8,
+    "soreness": null,
+    "workout": null,
+    "minutes": null,
+    "distance": null,
+    "incline": null
   }
 ]
