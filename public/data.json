@@ -852,5 +852,28 @@
     "minutes": null,
     "distance": null,
     "incline": null
+  },
+  {
+    "date": "2026-11-05",
+    "type": "morning",
+    "sleep": 6,
+    "energy": 9,
+    "soreness": null,
+    "workout": null,
+    "minutes": null,
+    "distance": null,
+    "incline": null
+  },
+  {
+    "date": "2026-11-05",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "6K run",
+    "minutes": 41,
+    "distance": 6,
+    "incline": null,
+    "notes": "User-reported non-record; calculated average pace 6:50/km"
   }
 ]
