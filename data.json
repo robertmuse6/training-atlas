@@ -875,5 +875,16 @@
     "distance": 6,
     "incline": null,
     "notes": "User-reported non-record; calculated average pace 6:50/km"
+  },
+  {
+    "date": "2026-11-06",
+    "type": "morning",
+    "sleep": 8,
+    "energy": 8,
+    "soreness": null,
+    "workout": null,
+    "minutes": null,
+    "distance": null,
+    "incline": null
   }
 ]
