@@ -886,5 +886,32 @@
     "minutes": null,
     "distance": null,
     "incline": null
+  },
+  {
+    "date": "2026-11-06",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "recovery run",
+    "minutes": null,
+    "distance": 2,
+    "incline": null,
+    "notes": "Duration and pace not specified; user gave ambiguous '20, 15 minutes', clarification pending"
+  },
+  {
+    "date": "2026-11-06",
+    "type": "food",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "",
+    "minutes": null,
+    "distance": null,
+    "incline": null,
+    "item": null,
+    "level": null,
+    "day_level": 2,
+    "notes": "User reported Level 2 food day"
   }
 ]
