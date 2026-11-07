@@ -924,5 +924,32 @@
     "minutes": null,
     "distance": null,
     "incline": null
+  },
+  {
+    "date": "2026-11-07",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "run",
+    "minutes": 30.0,
+    "distance": null,
+    "incline": null,
+    "notes": "Distance not specified"
+  },
+  {
+    "date": "2026-11-07",
+    "type": "food",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "",
+    "minutes": null,
+    "distance": null,
+    "incline": null,
+    "item": null,
+    "level": null,
+    "day_level": 1,
+    "notes": "User reported Level 1 food day"
   }
 ]
