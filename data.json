@@ -951,5 +951,16 @@
     "level": null,
     "day_level": 3,
     "notes": "User corrected food day to Level 3"
+  },
+  {
+    "date": "2026-11-08",
+    "type": "morning",
+    "sleep": 7,
+    "energy": 6,
+    "soreness": null,
+    "workout": null,
+    "minutes": null,
+    "distance": null,
+    "incline": null
   }
 ]
