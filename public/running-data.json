@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-11T23:32:40+05:30",
+  "updated": "2026-11-14T19:34:20+05:30",
   "weekly": {
     "week_start": "2026-11-09",
     "data_status": "partial",
@@ -75,12 +75,17 @@
     },
     "cheat_score": {
       "status": "ok",
-      "points": 19,
-      "pct": 90.5,
-      "known_deductions": 2,
+      "points": 17,
+      "pct": 81.0,
+      "known_deductions": 4,
       "penalties": [
         {
           "date": "2026-11-11",
+          "level": 2,
+          "cost": 2
+        },
+        {
+          "date": "2026-11-14",
           "level": 2,
           "cost": 2
         }
