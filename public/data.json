@@ -1059,5 +1059,20 @@
     "minutes": null,
     "distance": null,
     "incline": null
+  },
+  {
+    "date": "2026-11-15",
+    "type": "food",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "",
+    "minutes": null,
+    "distance": null,
+    "incline": null,
+    "item": null,
+    "level": null,
+    "day_level": 1,
+    "notes": "User reported Level 1 food day"
   }
 ]
