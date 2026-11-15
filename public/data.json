@@ -800,9 +800,9 @@
     "soreness": null,
     "workout": "recovery run + triceps",
     "minutes": null,
-    "distance": null,
+    "distance": 2.5,
     "incline": null,
-    "notes": "Duration, distance, and pace not specified"
+    "notes": "Running app: 'Gurgaon - Benchmark Run', 2.5 km, start time 4:53 PM. Earlier ledger report labels the same date's workout 'recovery run + triceps'; retained that label and added app distance without treating it as a second workout."
   },
   {
     "date": "2026-11-03",
@@ -825,7 +825,7 @@
     "minutes": null,
     "distance": 3,
     "incline": null,
-    "notes": "Duration and pace not specified"
+    "notes": "Running app: 'Gurgaon Running', 3 km, start time 8:39 AM; duration not shown."
   },
   {
     "date": "2026-11-02",
@@ -874,7 +874,7 @@
     "minutes": 41,
     "distance": 6,
     "incline": null,
-    "notes": "User-reported non-record; calculated average pace 6:50/km"
+    "notes": "Running app: 'Treadmill Running', 6 km, start time 7:23 AM. Duration 41 min retained from user's earlier report; app screenshot shows no duration."
   },
   {
     "date": "2026-11-06",
@@ -895,9 +895,9 @@
     "soreness": null,
     "workout": "recovery run",
     "minutes": null,
-    "distance": 2,
+    "distance": 2.2,
     "incline": null,
-    "notes": "Duration and pace not specified; user gave ambiguous '20, 15 minutes', clarification pending"
+    "notes": "Running app: 'Treadmill Running', 2.2 km, start time 4:58 PM; duration not shown. Original report's duration wording was ambiguous and remains unresolved. App label differs from the earlier 'recovery run' label, which is retained."
   },
   {
     "date": "2026-11-06",
@@ -933,9 +933,9 @@
     "soreness": null,
     "workout": "run",
     "minutes": 30.0,
-    "distance": null,
+    "distance": 3.7,
     "incline": null,
-    "notes": "Distance not specified"
+    "notes": "Running app: 'Treadmill Running', 3.7 km, start time 5:07 PM. Duration 30 min retained from user report; app screenshot shows no duration. Earlier label 'run' retained."
   },
   {
     "date": "2026-11-07",
@@ -1019,9 +1019,9 @@
     "soreness": null,
     "workout": "recovery run plus triceps",
     "minutes": null,
-    "distance": null,
+    "distance": 2.6,
     "incline": null,
-    "notes": "Duration and distance not specified"
+    "notes": "Running app: 'Recovery Run', 2.6 km, start time 5:22 PM; duration not shown. Earlier report also mentioned triceps; app entry is run only."
   },
   {
     "date": "2026-11-14",
@@ -1047,7 +1047,8 @@
     "workout": "8K run",
     "minutes": 54,
     "distance": 8,
-    "incline": null
+    "incline": null,
+    "notes": "Running app: '8K long run (12 weeks to go)', 8 km, start time 4:24 PM. Duration 54 min retained from user's report; app screenshot shows no duration."
   },
   {
     "date": "2026-11-15",
@@ -1074,5 +1075,29 @@
     "level": null,
     "day_level": 1,
     "notes": "User reported Level 1 food day"
+  },
+  {
+    "date": "2026-11-09",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "Treadmill Running",
+    "minutes": null,
+    "distance": 3.4,
+    "incline": null,
+    "notes": "App activity start 7:24 AM; duration not shown in screenshot"
+  },
+  {
+    "date": "2026-11-10",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "Speed run",
+    "minutes": null,
+    "distance": 3.8,
+    "incline": null,
+    "notes": "App activity start 3:46 PM; duration not shown in screenshot"
   }
 ]
