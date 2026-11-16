@@ -1099,5 +1099,16 @@
     "distance": 3.8,
     "incline": null,
     "notes": "App activity start 3:46 PM; duration not shown in screenshot"
+  },
+  {
+    "date": "2026-11-16",
+    "type": "morning",
+    "sleep": 6,
+    "energy": 7,
+    "soreness": null,
+    "workout": null,
+    "minutes": null,
+    "distance": null,
+    "incline": null
   }
 ]
