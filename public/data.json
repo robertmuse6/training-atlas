@@ -1121,5 +1121,27 @@
     "minutes": null,
     "distance": null,
     "incline": null
+  },
+  {
+    "date": "2026-11-18",
+    "type": "morning",
+    "sleep": 7,
+    "energy": 7,
+    "soreness": null,
+    "workout": null,
+    "minutes": null,
+    "distance": null,
+    "incline": null
+  },
+  {
+    "date": "2026-11-18",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "recovery run + leg day",
+    "minutes": null,
+    "distance": null,
+    "incline": null
   }
 ]
