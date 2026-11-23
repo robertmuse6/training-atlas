@@ -1217,5 +1217,16 @@
     "minutes": null,
     "distance": null,
     "incline": null
+  },
+  {
+    "date": "2026-11-23",
+    "type": "workout",
+    "sleep": null,
+    "energy": null,
+    "soreness": null,
+    "workout": "biceps + speedrun",
+    "minutes": null,
+    "distance": null,
+    "incline": null
   }
 ]
